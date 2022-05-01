@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::io::prelude::*;
 
-fn get_contents(filename: &str) -> String {
+pub fn get_contents(filename: &str) -> String {
     let mut f = File::open(filename).expect("File not found.");
 
     let mut contents = String::new();
@@ -12,43 +12,18 @@ fn get_contents(filename: &str) -> String {
     return contents;
 }
 
-#[cfg(test)]
-mod tests {
+pub fn extract_node<'a>(name: &str, parent: roxmltree::Node<'a, '_>) -> roxmltree::Node<'a, 'a> {
+    let child_elements = parent
+        .children()
+        .filter(|n| n.node_type() == roxmltree::NodeType::Element);
 
-    #[test]
-    fn it_works() {
-        let filename = "data/steel_standard_model_utf8.stb";
+    for node in child_elements {
+        let tag_name = node.tag_name().name();
 
-        let mut contents = crate::get_contents(filename);
-
-        let document = roxmltree::Document::parse(&contents).unwrap();
-
-        let root_node = document.root_element();
-
-        match root_node.node_type() {
-            roxmltree::NodeType::Element => {}
-            _ => {
-                panic!("This node is not an element.");
-            }
-        }
-
-        for attribute in root_node.attributes() {
-            println!("ST-Bridge {}: {}", attribute.name(), attribute.value());
-        }
-
-        let child_elements = root_node
-            .children()
-            .filter(|n| n.node_type() == roxmltree::NodeType::Element);
-
-        for node in child_elements {
-            let tag_name = node.tag_name().name();
-            if tag_name == "StbCommon" {
-                println!("StbCommon found.");
-            } else if tag_name == "StbModel" {
-                println!("StbModel found.");
-            } else if tag_name == "StbExtensions" {
-                println!("StbExtensions found.");
-            }
+        if tag_name == name {
+            return node;
         }
     }
+
+    panic!("Tag {} not found", name);
 }
