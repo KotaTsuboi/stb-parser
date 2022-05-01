@@ -166,7 +166,7 @@ struct StbSecBarArrangementSlab {
 struct StbSec1WaySlab1 {
     pos: StbSec1WaySlab1Position,
     strength: String,
-    D: String,
+    d: String,
     pitch: f64,
 }
 

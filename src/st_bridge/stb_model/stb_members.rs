@@ -60,7 +60,7 @@ struct StbGirder {
     is_foundation: bool,
     offset: f64,
     level: f64,
-    type_haunch_H: HanchType,
+    type_haunch_h: HanchType,
 }
 
 enum GirderStructureKind {
@@ -109,12 +109,12 @@ struct StbBeams {
 struct StbBeam {
     id: i32,
     name: String,
-    idNode_start: i32,
-    idNode_end: i32,
+    id_node_start: i32,
+    id_node_end: i32,
     rotate: f64,
     id_section: i32,
     kind_structure: GirderStructureKind,
-    isFoundation: bool,
+    is_foundation: bool,
     offset: f64,
     level: f64,
 }
