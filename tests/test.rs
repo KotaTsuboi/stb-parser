@@ -7,6 +7,10 @@ mod tests {
     #[test]
     fn it_works() {
         let st_bridge = read_st_bridge(FILE_NAME);
+
+        println!("stb version: {}", st_bridge.version);
+        println!("stb common: {:?}", st_bridge.stb_common);
+        println!("stb extensions: {:?}", st_bridge.stb_extensions);
     }
 
     #[test]

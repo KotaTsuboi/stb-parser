@@ -69,13 +69,7 @@ pub fn read_st_bridge(file_name: &str) -> StBridge {
 
     let version = root_node.attribute("version").unwrap().to_string();
 
-    for attribute in root_node.attributes() {
-        println!("ST-Bridge {}: {}", attribute.name(), attribute.value());
-    }
-
     let stb_common = extract_stb_common(root_node);
-
-    println!("stb_common: {:?}", stb_common);
 
     let stb_model = extract_stb_model(root_node);
 
@@ -139,16 +133,12 @@ pub fn extract_stb_model(root_node: roxmltree::Node) -> StbModel {
     let stb_model_node = extract_node("StbModel", root_node).unwrap();
 
     let stb_nodes = extract_stb_nodes(stb_model_node);
-    println!("stb_nodes: {:?}", stb_nodes);
 
     let stb_axes = extract_stb_axes(stb_model_node);
-    println!("stb_axes: {:?}", stb_axes);
 
     let stb_stories = extract_stb_stories(stb_model_node);
-    println!("stb_stories: {:?}", stb_stories);
 
     let stb_members = extract_stb_members(stb_model_node);
-    println!("stb_members: {:?}", stb_members);
 
     let stb_sections = extract_stb_sections(stb_model_node);
 
