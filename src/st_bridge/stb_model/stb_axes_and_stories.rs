@@ -1,48 +1,81 @@
+use strum_macros::EnumString;
+
+#[derive(Debug)]
 pub struct StbAxes {
-    stb_x_axis_list: Vec<StbXAxis>,
-    stb_y_axis_list: Vec<StbYAxis>,
+    pub stb_x_axis_list: Vec<StbXAxis>,
+    pub stb_y_axis_list: Vec<StbYAxis>,
 }
 
-struct StbXAxis {
-    id: i32,
-    name: String,
-    distance: f64,
-    stb_node_id_list: StbNodeIdList,
+impl StbAxes {
+    pub fn new() -> StbAxes {
+        StbAxes {
+            stb_x_axis_list: Vec::new(),
+            stb_y_axis_list: Vec::new(),
+        }
+    }
 }
 
-struct StbNodeIdList {
-    stb_node_id_list: Vec<StbNodeId>,
+#[derive(Debug)]
+pub struct StbXAxis {
+    pub id: i32,
+    pub name: String,
+    pub distance: f64,
+    pub stb_node_id_list: StbNodeIdList,
 }
 
-struct StbYAxis {
-    id: i32,
-    name: String,
-    distance: f64,
-    stb_node_id_list: Vec<StbNodeId>,
+#[derive(Debug)]
+pub struct StbYAxis {
+    pub id: i32,
+    pub name: String,
+    pub distance: f64,
+    pub stb_node_id_list: StbNodeIdList,
 }
 
-struct StbNodeId {
-    id: i32,
+#[derive(Debug)]
+pub struct StbNodeIdList {
+    pub children: Vec<StbNodeId>,
 }
 
+#[derive(Debug)]
+pub struct StbNodeId {
+    pub id: i32,
+}
+
+#[derive(Debug)]
 pub struct StbStories {
-    stb_story_list: Vec<StbStory>,
+    pub stb_story_list: Vec<StbStory>,
 }
 
-struct StbStory {
-    id: i32,
-    name: String,
-    height: f64,
-    kind: StbStoryKind,
-    concrete_strength: String,
-    stb_node_id_list: StbNodeIdList,
+impl StbStories {
+    pub fn new() -> StbStories {
+        StbStories {
+            stb_story_list: Vec::new(),
+        }
+    }
 }
 
-enum StbStoryKind {
+#[derive(Debug)]
+pub struct StbStory {
+    pub id: i32,
+    pub name: String,
+    pub height: f64,
+    pub kind: StbStoryKind,
+    pub concrete_strength: String,
+    pub stb_node_id_list: StbNodeIdList,
+}
+
+#[derive(Debug, EnumString)]
+pub enum StbStoryKind {
+    #[strum(serialize = "GENERAL")]
     General,
+    #[strum(serialize = "BASEMENT")]
     Basement,
+    #[strum(serialize = "ROOF")]
     Roof,
+    #[strum(serialize = "PENTHOUSE")]
     Penthouse,
+    #[strum(serialize = "ISOLATION")]
     Isolation,
+    #[strum(serialize = "DEPENDENCE")]
     Dependence,
 }

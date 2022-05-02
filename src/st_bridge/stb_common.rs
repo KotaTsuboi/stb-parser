@@ -1,25 +1,33 @@
+use std::collections::HashMap;
+
 #[derive(Debug)]
-pub struct StbCommon<'a> {
-    stb_reinforcement_strength_list: StbReinforcementStrengthList<'a>,
+pub struct StbCommon {
+    pub stb_reinforcement_strength_list: StbReinforcementStrengthList,
 }
 
-impl<'a> StbCommon<'a> {
-    pub fn new() -> StbCommon<'static> {
-        let list = Vec::new();
-        let stb_reinforcement_strength_list = StbReinforcementStrengthList { list };
+impl StbCommon {
+    pub fn new() -> StbCommon {
+        let map = HashMap::new();
+        let stb_reinforcement_strength_list = StbReinforcementStrengthList { map };
         StbCommon {
             stb_reinforcement_strength_list,
         }
     }
-
-    pub fn push(&mut self, value: StbReinforcementStrength<'a>) {
-        self.stb_reinforcement_strength_list.list.push(value);
-    }
 }
 
 #[derive(Debug)]
-struct StbReinforcementStrengthList<'a> {
-    list: Vec<StbReinforcementStrength<'a>>,
+pub struct StbReinforcementStrengthList {
+    map: HashMap<String, String>,
+}
+
+impl StbReinforcementStrengthList {
+    pub fn insert(&mut self, d: String, sd: String) {
+        self.map.insert(d, sd);
+    }
+
+    pub fn get(&self, d: String) -> Option<&String> {
+        self.map.get(&d)
+    }
 }
 
 #[derive(Debug)]
