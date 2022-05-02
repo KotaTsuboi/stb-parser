@@ -450,8 +450,6 @@ fn extract_stb_sections(stb_model_node: roxmltree::Node) -> StbSections {
             "StbSecSlab_RC" => stb_sections
                 .children
                 .push(Box::new(extract_stb_sec_slab_rc(node))),
-            "StbSecBrace_S" => {}
-            "StbSecSlab_RC" => {}
             "StbSecSlabDeck" => unimplemented_panic(tag_name),
             "StbSecSlabPrecast" => unimplemented_panic(tag_name),
             "StbSecWall_RC" => unimplemented_panic(tag_name),
@@ -461,8 +459,7 @@ fn extract_stb_sections(stb_model_node: roxmltree::Node) -> StbSections {
             "StbSecPileProduct" => unimplemented_panic(tag_name),
             "StbSecOpen_RC" => unimplemented_panic(tag_name),
             "StbSecParapet_RC" => unimplemented_panic(tag_name),
-            //"StbSecSteel" => stb_sections.stb_sec_steel = extract_stb_sec_steel(node),
-            "StbSecSteel" => {}
+            "StbSecSteel" => stb_sections.stb_sec_steel = extract_stb_sec_steel(node),
             "StbSecUndefined" => unimplemented_panic(tag_name),
             _ => {
                 panic!("Tag name {} is invalid.", tag_name)
@@ -772,7 +769,7 @@ fn extract_stb_sec_roll_box(node: roxmltree::Node) -> StbSecRollBox {
         a: parse_attribute("A", node).unwrap(),
         b: parse_attribute("B", node).unwrap(),
         t: parse_attribute("t", node).unwrap(),
-        r: parse_attribute("r", node).unwrap(),
+        r: parse_attribute("R", node).unwrap(),
     }
 }
 

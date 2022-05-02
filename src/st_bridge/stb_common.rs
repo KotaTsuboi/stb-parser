@@ -30,8 +30,10 @@ impl StbReinforcementStrengthList {
     }
 }
 
+/*
 #[derive(Debug)]
 pub struct StbReinforcementStrength<'a> {
     pub d: &'a str,
     pub sd: &'a str,
 }
+*/
