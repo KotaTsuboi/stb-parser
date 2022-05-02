@@ -283,7 +283,7 @@ impl StbSecSteel {
     }
 }
 
-trait StbSecSteelChildren {}
+pub trait StbSecSteelChildren {}
 
 #[derive(Debug)]
 pub struct StbSecRollH {
@@ -342,7 +342,7 @@ pub enum StbSecRollBoxType {
 }
 
 #[derive(Debug)]
-pub struct StbSecBuildBOX {
+pub struct StbSecBuildBox {
     pub name: String,
     pub a: f64,
     pub b: f64,
@@ -350,7 +350,7 @@ pub struct StbSecBuildBOX {
     pub t2: f64,
 }
 
-impl StbSecSteelChildren for StbSecBuildBOX {}
+impl StbSecSteelChildren for StbSecBuildBox {}
 
 #[derive(Debug)]
 pub struct StbSecPipe {

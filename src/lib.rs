@@ -36,13 +36,16 @@ use crate::st_bridge::stb_model::stb_sections::StbSecBeamS;
 use crate::st_bridge::stb_model::stb_sections::StbSecBeamSameSection;
 use crate::st_bridge::stb_model::stb_sections::StbSecBeamStartCenterEndSection;
 use crate::st_bridge::stb_model::stb_sections::StbSecBraceS;
+use crate::st_bridge::stb_model::stb_sections::StbSecBuildBox;
 use crate::st_bridge::stb_model::stb_sections::StbSecBuildH;
 use crate::st_bridge::stb_model::stb_sections::StbSecColumnS;
 use crate::st_bridge::stb_model::stb_sections::StbSecFigureBeam;
 use crate::st_bridge::stb_model::stb_sections::StbSecFigureSlab;
 use crate::st_bridge::stb_model::stb_sections::StbSecHaunch;
+use crate::st_bridge::stb_model::stb_sections::StbSecPipe;
 use crate::st_bridge::stb_model::stb_sections::StbSecRollBox;
 use crate::st_bridge::stb_model::stb_sections::StbSecRollH;
+use crate::st_bridge::stb_model::stb_sections::StbSecRollL;
 use crate::st_bridge::stb_model::stb_sections::StbSecSlabRC;
 use crate::st_bridge::stb_model::stb_sections::StbSecSteel;
 use crate::st_bridge::stb_model::stb_sections::StbSecSteelBeam;
@@ -683,7 +686,7 @@ fn extract_stb_sec_slab_rc(node: roxmltree::Node) -> StbSecSlabRC {
 }
 
 fn extract_stb_sec_steel(stb_sec_steel_node: roxmltree::Node) -> StbSecSteel {
-    let stb_sec_steel = StbSecSteel::new();
+    let mut stb_sec_steel = StbSecSteel::new();
 
     for node in stb_sec_steel_node.children().filter(|n| n.is_element()) {
         let tag_name = node.tag_name().name();
@@ -750,6 +753,38 @@ fn extract_stb_sec_roll_box(node: roxmltree::Node) -> StbSecRollBox {
         b: parse_attribute("B", node).unwrap(),
         t: parse_attribute("t", node).unwrap(),
         r: parse_attribute("r", node).unwrap(),
+    }
+}
+
+fn extract_stb_sec_build_box(node: roxmltree::Node) -> StbSecBuildBox {
+    StbSecBuildBox {
+        name: parse_attribute("name", node).unwrap(),
+        a: parse_attribute("A", node).unwrap(),
+        b: parse_attribute("B", node).unwrap(),
+        t1: parse_attribute("t1", node).unwrap(),
+        t2: parse_attribute("t2", node).unwrap(),
+    }
+}
+
+fn extract_stb_sec_pipe(node: roxmltree::Node) -> StbSecPipe {
+    StbSecPipe {
+        name: parse_attribute("name", node).unwrap(),
+        d: parse_attribute("D", node).unwrap(),
+        t: parse_attribute("t", node).unwrap(),
+    }
+}
+
+fn extract_stb_sec_roll_l(node: roxmltree::Node) -> StbSecRollL {
+    StbSecRollL {
+        name: parse_attribute("name", node).unwrap(),
+        sec_type: parse_enum_attribute("type", node).unwrap(),
+        a: parse_attribute("A", node).unwrap(),
+        b: parse_attribute("B", node).unwrap(),
+        t1: parse_attribute("t1", node).unwrap(),
+        t2: parse_attribute("t2", node).unwrap(),
+        r1: parse_attribute("r1", node).unwrap(),
+        r2: parse_attribute("r2", node).unwrap(),
+        side: parse_attribute("side", node).unwrap(),
     }
 }
 
