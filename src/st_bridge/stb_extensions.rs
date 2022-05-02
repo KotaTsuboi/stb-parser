@@ -1,8 +1,8 @@
 pub struct StbExtensions {
-    stb_extension_list: StbExtension,
+    pub stb_extension_list: Vec<StbExtension>,
 }
 
-struct StbExtension {
-    identifier: String,
-    description: String,
+pub struct StbExtension {
+    pub identifier: String,
+    pub description: String,
 }

@@ -3,6 +3,8 @@ use std::io::prelude::*;
 use std::str::FromStr;
 
 use crate::st_bridge::stb_common::StbCommon;
+use crate::st_bridge::stb_extensions::StbExtension;
+use crate::st_bridge::stb_extensions::StbExtensions;
 use crate::st_bridge::stb_model::stb_axes_and_stories::StbAxes;
 use crate::st_bridge::stb_model::stb_axes_and_stories::StbNodeId;
 use crate::st_bridge::stb_model::stb_axes_and_stories::StbNodeIdList;
@@ -26,7 +28,6 @@ use crate::st_bridge::stb_model::stb_members::StbPosts;
 use crate::st_bridge::stb_model::stb_members::StbSlab;
 use crate::st_bridge::stb_model::stb_members::StbSlabs;
 use crate::st_bridge::stb_model::stb_nodes::StbNode;
-use crate::st_bridge::stb_model::stb_nodes::StbNodeKind;
 use crate::st_bridge::stb_model::stb_nodes::StbNodes;
 use crate::st_bridge::stb_model::stb_sections::StbSec1WaySlab1;
 use crate::st_bridge::stb_model::stb_sections::StbSecBarArrangementBeam;
@@ -54,10 +55,39 @@ use crate::st_bridge::stb_model::stb_sections::StbSecSteelColumn;
 use crate::st_bridge::stb_model::stb_sections::StbSecStraightBeam;
 use crate::st_bridge::stb_model::stb_sections::StbSecStraightSlab;
 use crate::st_bridge::stb_model::stb_sections::StbSections;
-use crate::st_bridge::stb_model::stb_sections::StbSectionsChildren;
 use crate::st_bridge::stb_model::StbModel;
+use crate::st_bridge::StBridge;
 
 pub mod st_bridge;
+
+pub fn read_st_bridge(file_name: &str) -> StBridge {
+    let contents = get_contents(file_name);
+
+    let document = roxmltree::Document::parse(&contents).unwrap();
+
+    let root_node = document.root_element();
+
+    let version = root_node.attribute("version").unwrap().to_string();
+
+    for attribute in root_node.attributes() {
+        println!("ST-Bridge {}: {}", attribute.name(), attribute.value());
+    }
+
+    let stb_common = extract_stb_common(root_node);
+
+    println!("stb_common: {:?}", stb_common);
+
+    let stb_model = extract_stb_model(root_node);
+
+    let stb_extensions = extract_stb_extensions(root_node);
+
+    StBridge {
+        version,
+        stb_common,
+        stb_model,
+        stb_extensions,
+    }
+}
 
 pub fn get_contents(filename: &str) -> String {
     let mut f = File::open(filename).expect("File not found.");
@@ -786,6 +816,21 @@ fn extract_stb_sec_roll_l(node: roxmltree::Node) -> StbSecRollL {
         r2: parse_attribute("r2", node).unwrap(),
         side: parse_attribute("side", node).unwrap(),
     }
+}
+
+pub fn extract_stb_extensions(root_node: roxmltree::Node) -> StbExtensions {
+    let stb_extensions_node = extract_node("StbExtensions", root_node).unwrap();
+
+    let mut stb_extension_list = Vec::new();
+
+    for node in stb_extensions_node.children().filter(|n| n.is_element()) {
+        stb_extension_list.push(StbExtension {
+            identifier: parse_attribute("identifier", node).unwrap(),
+            description: parse_attribute("description", node).unwrap(),
+        });
+    }
+
+    StbExtensions { stb_extension_list }
 }
 
 fn parse_attribute<T: FromStr>(
