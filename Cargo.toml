@@ -1,7 +1,10 @@
 [package]
 name = "stb-parser"
-version = "0.1.0"
+version = "0.1.0-snapshot"
 edition = "2021"
+authors = ["Kota Tsuboi k17trpsynth@gmail.com"]
+description = "A parser for ST-Bridge which is a file format of building information model of architecture structure in Japan."
+license = "MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
