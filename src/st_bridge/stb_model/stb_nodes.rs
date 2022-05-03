@@ -1,21 +1,29 @@
+use std::collections::HashMap;
 use strum_macros::EnumString;
 
 #[derive(Debug)]
 pub struct StbNodes {
-    pub stb_node_list: Vec<StbNode>,
+    pub map: HashMap<i32, StbNode>,
 }
 
 impl StbNodes {
     pub fn new() -> StbNodes {
         StbNodes {
-            stb_node_list: Vec::new(),
+            map: HashMap::new(),
         }
+    }
+
+    pub fn insert(&mut self, key: i32, value: StbNode) {
+        self.map.insert(key, value);
+    }
+
+    pub fn get(&self, key: i32) -> Option<&StbNode> {
+        self.map.get(&key)
     }
 }
 
 #[derive(Debug)]
 pub struct StbNode {
-    pub id: i32,
     pub x: f64,
     pub y: f64,
     pub z: f64,

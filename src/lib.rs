@@ -162,14 +162,16 @@ fn extract_stb_nodes(stb_model_node: roxmltree::Node) -> StbNodes {
             None => None,
         };
 
-        stb_nodes.stb_node_list.push(StbNode {
-            id: parse_attribute("id", node).unwrap(),
-            x: parse_attribute("x", node).unwrap(),
-            y: parse_attribute("y", node).unwrap(),
-            z: parse_attribute("z", node).unwrap(),
-            kind: parse_enum_attribute("kind", node).unwrap(),
-            id_member,
-        });
+        stb_nodes.insert(
+            parse_attribute("id", node).unwrap(),
+            StbNode {
+                x: parse_attribute("x", node).unwrap(),
+                y: parse_attribute("y", node).unwrap(),
+                z: parse_attribute("z", node).unwrap(),
+                kind: parse_enum_attribute("kind", node).unwrap(),
+                id_member,
+            },
+        );
     }
 
     stb_nodes

@@ -1,11 +1,7 @@
 use strum_macros::EnumString;
 
+#[derive(Debug)]
 pub struct StbSections {
-    //stb_sec_column_s_list: Vec<StbSecColumnS>,
-    //stb_sec_beam_rc_list: Vec<StbSecBeamRC>,
-    //stb_sec_beam_s_list: Vec<StbSecBeamS>,
-    //stb_sec_slab_rc_list: Vec<StbSecSlabRC>,
-    //stb_sec_brace_s_list: Vec<StbSecBraceS>,
     pub children: Vec<Box<dyn StbSectionsChildren>>,
     pub stb_sec_steel: StbSecSteel,
 }
@@ -20,6 +16,12 @@ impl StbSections {
 }
 
 pub trait StbSectionsChildren {}
+
+impl std::fmt::Debug for dyn StbSectionsChildren {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+        write!(f, "{}", "section")
+    }
+}
 
 #[derive(Debug)]
 pub struct StbSecColumnS {
@@ -271,6 +273,7 @@ pub enum StbSecSteelBraceSPosition {
     All,
 }
 
+#[derive(Debug)]
 pub struct StbSecSteel {
     pub children: Vec<Box<dyn StbSecSteelChildren>>,
 }
@@ -284,6 +287,12 @@ impl StbSecSteel {
 }
 
 pub trait StbSecSteelChildren {}
+
+impl std::fmt::Debug for dyn StbSecSteelChildren {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+        write!(f, "{}", "steel section")
+    }
+}
 
 #[derive(Debug)]
 pub struct StbSecRollH {

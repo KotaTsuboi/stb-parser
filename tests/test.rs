@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use stbparser::*;
+    use stb_parser::*;
 
     static FILE_NAME: &str = "data/steel_standard_model_utf8.stb";
 
@@ -10,6 +10,7 @@ mod tests {
 
         println!("stb version: {}", st_bridge.version);
         println!("stb common: {:?}", st_bridge.stb_common);
+        println!("stb model: {:?}", st_bridge.stb_model);
         println!("stb extensions: {:?}", st_bridge.stb_extensions);
     }
 

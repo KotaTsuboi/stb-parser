@@ -9,6 +9,7 @@ use stb_members::StbMembers;
 use stb_nodes::StbNodes;
 use stb_sections::StbSections;
 
+#[derive(Debug)]
 pub struct StbModel {
     pub stb_nodes: StbNodes,
     pub stb_axes: StbAxes,
