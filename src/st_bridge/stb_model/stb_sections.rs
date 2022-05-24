@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
 use strum_macros::EnumString;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbSections {
     pub children: Vec<Box<dyn StbSectionsChildren>>,
     pub stb_sec_steel: StbSecSteel,
@@ -23,7 +24,7 @@ impl std::fmt::Debug for dyn StbSectionsChildren {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecColumnS {
     pub id: i32,
     pub name: String,
@@ -36,7 +37,7 @@ pub struct StbSecColumnS {
 
 impl StbSectionsChildren for StbSecColumnS {}
 
-#[derive(Debug, EnumString)]
+#[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum ColumnKind {
     #[strum(serialize = "COLUMN")]
     Column,
@@ -44,7 +45,7 @@ pub enum ColumnKind {
     Post,
 }
 
-#[derive(Debug, EnumString)]
+#[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum SteelBaseType {
     #[strum(serialize = "")]
     Null,
@@ -56,7 +57,7 @@ pub enum SteelBaseType {
     Wrap,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecSteelColumn {
     pub pos: StbSecSteelColumnPosition,
     pub shape: String,
@@ -64,13 +65,13 @@ pub struct StbSecSteelColumn {
     pub strength_web: String,
 }
 
-#[derive(Debug, EnumString)]
+#[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum StbSecSteelColumnPosition {
     #[strum(serialize = "ALL")]
     All,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecBeamRC {
     pub id: i32,
     pub name: String,
@@ -98,7 +99,7 @@ pub struct StbSecBeamRC {
 
 impl StbSectionsChildren for StbSecBeamRC {}
 
-#[derive(Debug, EnumString)]
+#[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum BeamKind {
     #[strum(serialize = "GIRDER")]
     Girder,
@@ -106,13 +107,13 @@ pub enum BeamKind {
     Beam,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecFigureBeam {
     pub stb_sec_haunch: Option<StbSecHaunch>,
     pub stb_sec_straight: Option<StbSecStraightBeam>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecHaunch {
     pub width_start: f64,
     pub depth_start: f64,
@@ -122,18 +123,18 @@ pub struct StbSecHaunch {
     pub depth_end: f64,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecStraightBeam {
     pub depth: f64,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecBarArrangementBeam {
     pub stb_sec_beam_start_center_end_section_list: Option<Vec<StbSecBeamStartCenterEndSection>>,
     pub stb_sec_beam_same_section: Option<StbSecBeamSameSection>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecBeamStartCenterEndSection {
     pub pos: StbSecBeamSectionPosition,
     pub count_main_top_1st: u32,
@@ -145,7 +146,7 @@ pub struct StbSecBeamStartCenterEndSection {
     pub pitch_bar_spacing: f64,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecBeamSameSection {
     pub count_main_top_1st: u32,
     pub count_main_bottom_1st: u32,
@@ -156,7 +157,7 @@ pub struct StbSecBeamSameSection {
     pub pitch_bar_spacing: f64,
 }
 
-#[derive(Debug, EnumString)]
+#[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum StbSecBeamSectionPosition {
     #[strum(serialize = "START")]
     Start,
@@ -166,7 +167,7 @@ pub enum StbSecBeamSectionPosition {
     End,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecBeamS {
     pub id: i32,
     pub name: String,
@@ -178,7 +179,7 @@ pub struct StbSecBeamS {
 
 impl StbSectionsChildren for StbSecBeamS {}
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecSteelBeam {
     pub pos: StbSecSteelBeamPosition,
     pub shape: String,
@@ -186,13 +187,13 @@ pub struct StbSecSteelBeam {
     pub strength_web: String,
 }
 
-#[derive(Debug, EnumString)]
+#[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum StbSecSteelBeamPosition {
     #[strum(serialize = "ALL")]
     All,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecSlabRC {
     pub id: i32,
     pub name: String,
@@ -205,22 +206,22 @@ pub struct StbSecSlabRC {
 
 impl StbSectionsChildren for StbSecSlabRC {}
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecFigureSlab {
     pub stb_sec_straight: StbSecStraightSlab,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecStraightSlab {
     pub depth: f64,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecBarArrangementSlab {
     pub stb_sec_1way_slab_1_list: Vec<StbSec1WaySlab1>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbSec1WaySlab1 {
     pub pos: StbSec1WaySlab1Position,
     pub strength: String,
@@ -228,7 +229,7 @@ pub struct StbSec1WaySlab1 {
     pub pitch: f64,
 }
 
-#[derive(Debug, EnumString)]
+#[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum StbSec1WaySlab1Position {
     #[strum(serialize = "MAIN_TOP")]
     MainTop,
@@ -240,7 +241,7 @@ pub enum StbSec1WaySlab1Position {
     TransverseBottom,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecBraceS {
     pub id: i32,
     pub name: String,
@@ -251,7 +252,7 @@ pub struct StbSecBraceS {
 
 impl StbSectionsChildren for StbSecBraceS {}
 
-#[derive(Debug, EnumString)]
+#[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum BraceKind {
     #[strum(serialize = "VERTICAL")]
     Vertical,
@@ -259,7 +260,7 @@ pub enum BraceKind {
     Horizontal,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecSteelBrace {
     pub pos: StbSecSteelBraceSPosition,
     pub shape: String,
@@ -267,13 +268,13 @@ pub struct StbSecSteelBrace {
     pub strength_web: String,
 }
 
-#[derive(Debug, EnumString)]
+#[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum StbSecSteelBraceSPosition {
     #[strum(serialize = "ALL")]
     All,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecSteel {
     pub children: Vec<Box<dyn StbSecSteelChildren>>,
 }
@@ -294,7 +295,7 @@ impl std::fmt::Debug for dyn StbSecSteelChildren {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecRollH {
     pub name: String,
     pub sec_type: StbSecRollHType,
@@ -307,7 +308,7 @@ pub struct StbSecRollH {
 
 impl StbSecSteelChildren for StbSecRollH {}
 
-#[derive(Debug, EnumString)]
+#[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum StbSecRollHType {
     #[strum(serialize = "H")]
     H,
@@ -315,7 +316,7 @@ pub enum StbSecRollHType {
     SH,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecBuildH {
     pub name: String,
     pub a: f64,
@@ -326,7 +327,7 @@ pub struct StbSecBuildH {
 
 impl StbSecSteelChildren for StbSecBuildH {}
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecRollBox {
     pub name: String,
     pub sec_type: StbSecRollBoxType,
@@ -338,7 +339,7 @@ pub struct StbSecRollBox {
 
 impl StbSecSteelChildren for StbSecRollBox {}
 
-#[derive(Debug, EnumString)]
+#[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum StbSecRollBoxType {
     #[strum(serialize = "BCP")]
     BCP,
@@ -350,7 +351,7 @@ pub enum StbSecRollBoxType {
     Else,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecBuildBox {
     pub name: String,
     pub a: f64,
@@ -361,7 +362,7 @@ pub struct StbSecBuildBox {
 
 impl StbSecSteelChildren for StbSecBuildBox {}
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecPipe {
     pub name: String,
     pub d: f64,
@@ -370,7 +371,7 @@ pub struct StbSecPipe {
 
 impl StbSecSteelChildren for StbSecPipe {}
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecRollL {
     pub name: String,
     pub sec_type: StbSecRollLType,
@@ -385,7 +386,7 @@ pub struct StbSecRollL {
 
 impl StbSecSteelChildren for StbSecRollL {}
 
-#[derive(Debug, EnumString)]
+#[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum StbSecRollLType {
     #[strum(serialize = "L")]
     L,

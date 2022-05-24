@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbCommon {
     pub stb_reinforcement_strength_list: StbReinforcementStrengthList,
 }
@@ -15,7 +16,7 @@ impl StbCommon {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbReinforcementStrengthList {
     map: HashMap<String, String>,
 }

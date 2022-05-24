@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
 use strum_macros::EnumString;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbMembers {
     pub stb_columns: StbColumns,
     pub stb_posts: StbPosts,
@@ -17,7 +18,7 @@ pub struct StbMembers {
     // TODO: implement StbOpens
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbColumns {
     pub stb_column_list: Vec<StbColumn>,
 }
@@ -32,7 +33,7 @@ impl StbColumns {
 }
 */
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbColumn {
     pub id: i32,
     pub name: String,
@@ -47,7 +48,7 @@ pub struct StbColumn {
     pub condition_top: JointCondition,
 }
 
-#[derive(Debug, EnumString)]
+#[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum ColumnStructureKind {
     #[strum(serialize = "RC")]
     RC,
@@ -61,7 +62,7 @@ pub enum ColumnStructureKind {
     Undefined,
 }
 
-#[derive(Debug, EnumString)]
+#[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum JointCondition {
     #[strum(serialize = "FIX")]
     Fix,
@@ -69,7 +70,7 @@ pub enum JointCondition {
     Pin,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbGirders {
     pub stb_girder_list: Vec<StbGirder>,
 }
@@ -84,7 +85,7 @@ impl StbGirders {
 }
 */
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbGirder {
     pub id: i32,
     pub name: String,
@@ -99,7 +100,7 @@ pub struct StbGirder {
     pub type_haunch_h: Option<HaunchType>,
 }
 
-#[derive(Debug, EnumString)]
+#[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum GirderStructureKind {
     #[strum(serialize = "RC")]
     RC,
@@ -111,7 +112,7 @@ pub enum GirderStructureKind {
     Undefined,
 }
 
-#[derive(Debug, EnumString)]
+#[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum HaunchType {
     #[strum(serialize = "BOTH")]
     Both,
@@ -121,7 +122,7 @@ pub enum HaunchType {
     Left,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbPosts {
     pub stb_post_list: Vec<StbPost>,
 }
@@ -136,7 +137,7 @@ impl StbPosts {
 }
 */
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbPost {
     pub id: i32,
     pub name: String,
@@ -157,7 +158,7 @@ pub struct StbPost {
     pub condition_top: JointCondition,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbBeams {
     pub stb_beam_list: Vec<StbBeam>,
 }
@@ -172,7 +173,7 @@ impl StbBeams {
 }
 */
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbBeam {
     pub id: i32,
     pub name: String,
@@ -186,7 +187,7 @@ pub struct StbBeam {
     pub level: f64,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbSlabs {
     pub stb_slab_list: Vec<StbSlab>,
 }
@@ -201,7 +202,7 @@ impl StbSlabs {
 }
 */
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbSlab {
     pub id: i32,
     pub name: String,
@@ -212,7 +213,7 @@ pub struct StbSlab {
     pub is_foundation: bool,
 }
 
-#[derive(Debug, EnumString)]
+#[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum SlabStructureKind {
     #[strum(serialize = "RC")]
     RC,
@@ -222,7 +223,7 @@ pub enum SlabStructureKind {
     Precast,
 }
 
-#[derive(Debug, EnumString)]
+#[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum SlabKind {
     #[strum(serialize = "NORMAL")]
     Normal,
@@ -230,7 +231,7 @@ pub enum SlabKind {
     Canti,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbBraces {
     pub stb_brace_list: Vec<StbBrace>,
 }
@@ -245,7 +246,7 @@ impl StbBraces {
 }
 */
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbBrace {
     pub id: i32,
     pub name: String,
@@ -264,7 +265,7 @@ pub struct StbBrace {
     pub condition_end: JointCondition,
 }
 
-#[derive(Debug, EnumString)]
+#[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum BraceStructureKind {
     #[strum(serialize = "RC")]
     RC,

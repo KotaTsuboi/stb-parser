@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
 use strum_macros::EnumString;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbAxes {
     pub stb_x_axis_list: Vec<StbXAxis>,
     pub stb_y_axis_list: Vec<StbYAxis>,
@@ -15,7 +16,7 @@ impl StbAxes {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbXAxis {
     pub id: i32,
     pub name: String,
@@ -23,7 +24,7 @@ pub struct StbXAxis {
     pub stb_node_id_list: StbNodeIdList,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbYAxis {
     pub id: i32,
     pub name: String,
@@ -31,17 +32,17 @@ pub struct StbYAxis {
     pub stb_node_id_list: StbNodeIdList,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbNodeIdList {
     pub children: Vec<StbNodeId>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbNodeId {
     pub id: i32,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbStories {
     pub stb_story_list: Vec<StbStory>,
 }
@@ -54,7 +55,7 @@ impl StbStories {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbStory {
     pub id: i32,
     pub name: String,
@@ -64,7 +65,7 @@ pub struct StbStory {
     pub stb_node_id_list: StbNodeIdList,
 }
 
-#[derive(Debug, EnumString)]
+#[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum StbStoryKind {
     #[strum(serialize = "GENERAL")]
     General,

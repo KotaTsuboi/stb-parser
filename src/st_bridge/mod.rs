@@ -5,8 +5,9 @@ pub mod stb_model;
 use self::stb_common::StbCommon;
 use self::stb_extensions::StbExtensions;
 use self::stb_model::StbModel;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StBridge {
     pub version: String,
     pub stb_common: StbCommon,

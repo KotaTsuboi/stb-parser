@@ -1,7 +1,8 @@
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use strum_macros::EnumString;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbNodes {
     pub map: HashMap<i32, StbNode>,
 }
@@ -22,7 +23,7 @@ impl StbNodes {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StbNode {
     pub x: f64,
     pub y: f64,
@@ -31,7 +32,7 @@ pub struct StbNode {
     pub id_member: Option<i32>,
 }
 
-#[derive(Debug, EnumString)]
+#[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum StbNodeKind {
     #[strum(serialize = "ON_GIRDER")]
     OnGirder,
