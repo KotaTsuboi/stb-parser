@@ -372,13 +372,13 @@ pub enum StbSecSteelChildren {
 
 impl StbSecSteelChildren {
     pub fn name(&self) -> String {
-        match *self {
-            StbSecSteelChildren::StbSecRollH { name, .. } => name,
-            StbSecSteelChildren::StbSecBuildH { name, .. } => name,
-            StbSecSteelChildren::StbSecRollBox { name, .. } => name,
-            StbSecSteelChildren::StbSecBuildBox { name, .. } => name,
-            StbSecSteelChildren::StbSecPipe { name, .. } => name,
-            StbSecSteelChildren::StbSecRollL { name, .. } => name,
+        match self {
+            StbSecSteelChildren::StbSecRollH { name, .. } => name.clone(),
+            StbSecSteelChildren::StbSecBuildH { name, .. } => name.clone(),
+            StbSecSteelChildren::StbSecRollBox { name, .. } => name.clone(),
+            StbSecSteelChildren::StbSecBuildBox { name, .. } => name.clone(),
+            StbSecSteelChildren::StbSecPipe { name, .. } => name.clone(),
+            StbSecSteelChildren::StbSecRollL { name, .. } => name.clone(),
         }
     }
 }

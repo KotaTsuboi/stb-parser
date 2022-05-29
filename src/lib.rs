@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::prelude::*;
 use std::str::FromStr;
@@ -210,32 +211,46 @@ fn extract_stb_stories(stb_model_node: roxmltree::Node) -> StbStories {
 fn extract_stb_members(stb_model_node: roxmltree::Node) -> StbMembers {
     let stb_members_node = extract_node("StbMembers", stb_model_node).unwrap();
 
-    let stb_columns = extract_stb_columns(stb_members_node);
-    let stb_posts = extract_stb_posts(stb_members_node);
-    let stb_girders = extract_stb_girders(stb_members_node);
-    let stb_beams = extract_stb_beams(stb_members_node);
-    let stb_braces = extract_stb_braces(stb_members_node);
-    let stb_slabs = extract_stb_slabs(stb_members_node);
+    let mut stb_member_map: HashMap<u32, StbMember> = HashMap::new();
 
-    StbMembers {
-        stb_columns,
-        stb_posts,
-        stb_girders,
-        stb_beams,
-        stb_braces,
-        stb_slabs,
+    for node in stb_members_node.children().filter(|n| n.is_element()) {
+        let tag_name = node.tag_name().name();
+
+        let member_map = match tag_name {
+            "StbColumns" => Some(extract_stb_columns(node)),
+            "StbPosts" => Some(extract_stb_posts(stb_members_node)),
+            "StbGirders" => Some(extract_stb_girders(stb_members_node)),
+            "StbBeams" => Some(extract_stb_beams(stb_members_node)),
+            "StbBraces" => Some(extract_stb_braces(stb_members_node)),
+            "StbSlabs" => Some(extract_stb_slabs(stb_members_node)),
+            "StbWalls" => None,
+            "StbFootings" => None,
+            "StbStripFootings" => None,
+            "StbPiles" => None,
+            "StbFoundationColumns" => None,
+            "StbParapets" => None,
+            "StbOpens" => None,
+            _ => None,
+        };
+
+        let member_map =
+            member_map.unwrap_or_else(|| panic!("Tag name {} is unimplemented.", tag_name));
+
+        stb_member_map.extend(member_map.into_iter());
     }
+
+    StbMembers { stb_member_map }
 }
 
-fn extract_stb_columns(stb_members_node: roxmltree::Node) -> Vec<StbMember> {
-    let stb_columns_node = extract_node("StbColumns", stb_members_node);
+fn extract_stb_columns(stb_columns_node: roxmltree::Node) -> HashMap<u32, StbMember> {
+    let mut stb_column_map: HashMap<u32, StbMember> = HashMap::new();
 
-    let mut stb_column_list: Vec<StbMember> = Vec::new();
-
-    if let Some(stb_columns_node) = stb_columns_node {
-        for node in stb_columns_node.children().filter(|n| n.is_element()) {
-            stb_column_list.push(StbMember::StbColumn {
-                id: parse_attribute("id", node).unwrap(),
+    for node in stb_columns_node.children().filter(|n| n.is_element()) {
+        let id = parse_attribute("id", node).unwrap();
+        stb_column_map.insert(
+            id,
+            StbMember::StbColumn {
+                id,
                 name: node.attribute("name").unwrap().to_string(),
                 id_node_bottom: parse_attribute("idNode_bottom", node).unwrap(),
                 id_node_top: parse_attribute("idNode_top", node).unwrap(),
@@ -246,22 +261,22 @@ fn extract_stb_columns(stb_members_node: roxmltree::Node) -> Vec<StbMember> {
                 offset_y: parse_attribute("offset_Y", node).unwrap(),
                 condition_bottom: parse_enum_attribute("condition_bottom", node).unwrap(),
                 condition_top: parse_enum_attribute("condition_top", node).unwrap(),
-            });
-        }
+            },
+        );
     }
 
-    stb_column_list
+    stb_column_map
 }
 
-fn extract_stb_posts(stb_members_node: roxmltree::Node) -> Vec<StbMember> {
-    let stb_posts_node = extract_node("StbPosts", stb_members_node);
+fn extract_stb_posts(stb_posts_node: roxmltree::Node) -> HashMap<u32, StbMember> {
+    let mut stb_post_map: HashMap<u32, StbMember> = HashMap::new();
 
-    let mut stb_post_list: Vec<StbMember> = Vec::new();
-
-    if let Some(stb_posts_node) = stb_posts_node {
-        for node in stb_posts_node.children().filter(|n| n.is_element()) {
-            stb_post_list.push(StbMember::StbPost {
-                id: parse_attribute("id", node).unwrap(),
+    for node in stb_posts_node.children().filter(|n| n.is_element()) {
+        let id = parse_attribute("id", node).unwrap();
+        stb_post_map.insert(
+            id,
+            StbMember::StbPost {
+                id,
                 name: node.attribute("name").unwrap().to_string(),
                 id_node_bottom: parse_attribute("idNode_bottom", node).unwrap(),
                 id_node_top: parse_attribute("idNode_top", node).unwrap(),
@@ -278,109 +293,117 @@ fn extract_stb_posts(stb_members_node: roxmltree::Node) -> Vec<StbMember> {
                 offset_top_z: parse_attribute("offset_top_Z", node).unwrap(),
                 condition_bottom: parse_enum_attribute("condition_bottom", node).unwrap(),
                 condition_top: parse_enum_attribute("condition_top", node).unwrap(),
-            });
-        }
+            },
+        );
     }
 
-    stb_post_list
+    stb_post_map
 }
 
-fn extract_stb_girders(stb_members_node: roxmltree::Node) -> StbGirders {
-    let stb_girders_node = extract_node("StbGirders", stb_members_node).unwrap();
-
-    let mut stb_girder_list: Vec<StbGirder> = Vec::new();
+fn extract_stb_girders(stb_girders_node: roxmltree::Node) -> HashMap<u32, StbMember> {
+    let mut stb_girder_map: HashMap<u32, StbMember> = HashMap::new();
 
     for node in stb_girders_node.children().filter(|n| n.is_element()) {
-        stb_girder_list.push(StbGirder {
-            id: parse_attribute("id", node).unwrap(),
-            name: node.attribute("name").unwrap().to_string(),
-            id_node_start: parse_attribute("idNode_start", node).unwrap(),
-            id_node_end: parse_attribute("idNode_end", node).unwrap(),
-            rotate: parse_attribute("rotate", node).unwrap(),
-            id_section: parse_attribute("id_section", node).unwrap(),
-            kind_structure: parse_enum_attribute("kind_structure", node).unwrap(),
-            is_foundation: parse_attribute("isFoundation", node).unwrap(),
-            offset: parse_attribute("offset", node).unwrap(),
-            level: parse_attribute("level", node).unwrap(),
-            type_haunch_h: match node.attribute("type_haunch_H") {
-                Some(s) => Some(HaunchType::from_str(s).unwrap()),
-                None => None,
+        let id = parse_attribute("id", node).unwrap();
+        stb_girder_map.insert(
+            id,
+            StbMember::StbGirder {
+                id,
+                name: node.attribute("name").unwrap().to_string(),
+                id_node_start: parse_attribute("idNode_start", node).unwrap(),
+                id_node_end: parse_attribute("idNode_end", node).unwrap(),
+                rotate: parse_attribute("rotate", node).unwrap(),
+                id_section: parse_attribute("id_section", node).unwrap(),
+                kind_structure: parse_enum_attribute("kind_structure", node).unwrap(),
+                is_foundation: parse_attribute("isFoundation", node).unwrap(),
+                offset: parse_attribute("offset", node).unwrap(),
+                level: parse_attribute("level", node).unwrap(),
+                type_haunch_h: match node.attribute("type_haunch_H") {
+                    Some(s) => Some(HaunchType::from_str(s).unwrap()),
+                    None => None,
+                },
             },
-        });
+        );
     }
 
-    StbGirders { stb_girder_list }
+    stb_girder_map
 }
 
-fn extract_stb_beams(stb_members_node: roxmltree::Node) -> StbBeams {
-    let stb_beams_node = extract_node("StbBeams", stb_members_node).unwrap();
-
-    let mut stb_beam_list: Vec<StbBeam> = Vec::new();
+fn extract_stb_beams(stb_beams_node: roxmltree::Node) -> HashMap<u32, StbMember> {
+    let mut stb_beam_map: HashMap<u32, StbMember> = HashMap::new();
 
     for node in stb_beams_node.children().filter(|n| n.is_element()) {
-        stb_beam_list.push(StbBeam {
-            id: parse_attribute("id", node).unwrap(),
-            name: node.attribute("name").unwrap().to_string(),
-            id_node_start: parse_attribute("idNode_start", node).unwrap(),
-            id_node_end: parse_attribute("idNode_end", node).unwrap(),
-            rotate: parse_attribute("rotate", node).unwrap(),
-            id_section: parse_attribute("id_section", node).unwrap(),
-            kind_structure: parse_enum_attribute("kind_structure", node).unwrap(),
-            is_foundation: parse_attribute("isFoundation", node).unwrap(),
-            offset: parse_attribute("offset", node).unwrap(),
-            level: parse_attribute("level", node).unwrap(),
-        });
+        let id = parse_attribute("id", node).unwrap();
+        stb_beam_map.insert(
+            id,
+            StbMember::StbBeam {
+                id,
+                name: node.attribute("name").unwrap().to_string(),
+                id_node_start: parse_attribute("idNode_start", node).unwrap(),
+                id_node_end: parse_attribute("idNode_end", node).unwrap(),
+                rotate: parse_attribute("rotate", node).unwrap(),
+                id_section: parse_attribute("id_section", node).unwrap(),
+                kind_structure: parse_enum_attribute("kind_structure", node).unwrap(),
+                is_foundation: parse_attribute("isFoundation", node).unwrap(),
+                offset: parse_attribute("offset", node).unwrap(),
+                level: parse_attribute("level", node).unwrap(),
+            },
+        );
     }
 
-    StbBeams { stb_beam_list }
+    stb_beam_map
 }
 
-fn extract_stb_braces(stb_members_node: roxmltree::Node) -> StbBraces {
-    let stb_braces_node = extract_node("StbBraces", stb_members_node).unwrap();
-
-    let mut stb_brace_list: Vec<StbBrace> = Vec::new();
+fn extract_stb_braces(stb_braces_node: roxmltree::Node) -> HashMap<u32, StbMember> {
+    let mut stb_brace_map: HashMap<u32, StbMember> = HashMap::new();
 
     for node in stb_braces_node.children().filter(|n| n.is_element()) {
-        stb_brace_list.push(StbBrace {
-            id: parse_attribute("id", node).unwrap(),
-            name: node.attribute("name").unwrap().to_string(),
-            id_node_start: parse_attribute("idNode_start", node).unwrap(),
-            id_node_end: parse_attribute("idNode_end", node).unwrap(),
-            rotate: parse_attribute("rotate", node).unwrap(),
-            id_section: parse_attribute("id_section", node).unwrap(),
-            kind_structure: parse_enum_attribute("kind_structure", node).unwrap(),
-            offset_start_x: parse_attribute("offset_start_X", node).unwrap(),
-            offset_start_y: parse_attribute("offset_start_Y", node).unwrap(),
-            offset_start_z: parse_attribute("offset_start_Z", node).unwrap(),
-            offset_end_x: parse_attribute("offset_end_X", node).unwrap(),
-            offset_end_y: parse_attribute("offset_end_Y", node).unwrap(),
-            offset_end_z: parse_attribute("offset_end_Z", node).unwrap(),
-            condition_start: parse_enum_attribute("condition_start", node).unwrap(),
-            condition_end: parse_enum_attribute("condition_end", node).unwrap(),
-        });
+        let id = parse_attribute("id", node).unwrap();
+        stb_brace_map.insert(
+            id,
+            StbMember::StbBrace {
+                id,
+                name: node.attribute("name").unwrap().to_string(),
+                id_node_start: parse_attribute("idNode_start", node).unwrap(),
+                id_node_end: parse_attribute("idNode_end", node).unwrap(),
+                rotate: parse_attribute("rotate", node).unwrap(),
+                id_section: parse_attribute("id_section", node).unwrap(),
+                kind_structure: parse_enum_attribute("kind_structure", node).unwrap(),
+                offset_start_x: parse_attribute("offset_start_X", node).unwrap(),
+                offset_start_y: parse_attribute("offset_start_Y", node).unwrap(),
+                offset_start_z: parse_attribute("offset_start_Z", node).unwrap(),
+                offset_end_x: parse_attribute("offset_end_X", node).unwrap(),
+                offset_end_y: parse_attribute("offset_end_Y", node).unwrap(),
+                offset_end_z: parse_attribute("offset_end_Z", node).unwrap(),
+                condition_start: parse_enum_attribute("condition_start", node).unwrap(),
+                condition_end: parse_enum_attribute("condition_end", node).unwrap(),
+            },
+        );
     }
 
-    StbBraces { stb_brace_list }
+    stb_brace_map
 }
 
-fn extract_stb_slabs(stb_members_node: roxmltree::Node) -> StbSlabs {
-    let stb_slabs_node = extract_node("StbSlabs", stb_members_node).unwrap();
-
-    let mut stb_slab_list: Vec<StbSlab> = Vec::new();
+fn extract_stb_slabs(stb_slabs_node: roxmltree::Node) -> HashMap<u32, StbMember> {
+    let mut stb_slab_map: HashMap<u32, StbMember> = HashMap::new();
 
     for node in stb_slabs_node.children().filter(|n| n.is_element()) {
-        stb_slab_list.push(StbSlab {
-            id: parse_attribute("id", node).unwrap(),
-            name: node.attribute("name").unwrap().to_string(),
-            id_section: parse_attribute("id_section", node).unwrap(),
-            kind_structure: parse_enum_attribute("kind_structure", node).unwrap(),
-            kind_slab: parse_enum_attribute("kind_slab", node).unwrap(),
-            level: parse_attribute("level", node).unwrap(),
-            is_foundation: parse_attribute("isFoundation", node).unwrap(),
-        });
+        let id = parse_attribute("id", node).unwrap();
+        stb_slab_map.insert(
+            id,
+            StbMember::StbSlab {
+                id,
+                name: node.attribute("name").unwrap().to_string(),
+                id_section: parse_attribute("id_section", node).unwrap(),
+                kind_structure: parse_enum_attribute("kind_structure", node).unwrap(),
+                kind_slab: parse_enum_attribute("kind_slab", node).unwrap(),
+                level: parse_attribute("level", node).unwrap(),
+                is_foundation: parse_attribute("isFoundation", node).unwrap(),
+            },
+        );
     }
 
-    StbSlabs { stb_slab_list }
+    stb_slab_map
 }
 
 fn extract_stb_sections(stb_model_node: roxmltree::Node) -> StbSections {
