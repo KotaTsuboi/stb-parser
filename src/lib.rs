@@ -227,58 +227,62 @@ fn extract_stb_members(stb_model_node: roxmltree::Node) -> StbMembers {
     }
 }
 
-fn extract_stb_columns(stb_members_node: roxmltree::Node) -> StbColumns {
-    let stb_columns_node = extract_node("StbColumns", stb_members_node).unwrap();
+fn extract_stb_columns(stb_members_node: roxmltree::Node) -> Vec<StbMember> {
+    let stb_columns_node = extract_node("StbColumns", stb_members_node);
 
-    let mut stb_column_list: Vec<StbColumn> = Vec::new();
+    let mut stb_column_list: Vec<StbMember> = Vec::new();
 
-    for node in stb_columns_node.children().filter(|n| n.is_element()) {
-        stb_column_list.push(StbColumn {
-            id: parse_attribute("id", node).unwrap(),
-            name: node.attribute("name").unwrap().to_string(),
-            id_node_bottom: parse_attribute("idNode_bottom", node).unwrap(),
-            id_node_top: parse_attribute("idNode_top", node).unwrap(),
-            rotate: parse_attribute("rotate", node).unwrap(),
-            id_section: parse_attribute("id_section", node).unwrap(),
-            kind_structure: parse_enum_attribute("kind_structure", node).unwrap(),
-            offset_x: parse_attribute("offset_X", node).unwrap(),
-            offset_y: parse_attribute("offset_Y", node).unwrap(),
-            condition_bottom: parse_enum_attribute("condition_bottom", node).unwrap(),
-            condition_top: parse_enum_attribute("condition_top", node).unwrap(),
-        });
+    if let Some(stb_columns_node) = stb_columns_node {
+        for node in stb_columns_node.children().filter(|n| n.is_element()) {
+            stb_column_list.push(StbMember::StbColumn {
+                id: parse_attribute("id", node).unwrap(),
+                name: node.attribute("name").unwrap().to_string(),
+                id_node_bottom: parse_attribute("idNode_bottom", node).unwrap(),
+                id_node_top: parse_attribute("idNode_top", node).unwrap(),
+                rotate: parse_attribute("rotate", node).unwrap(),
+                id_section: parse_attribute("id_section", node).unwrap(),
+                kind_structure: parse_enum_attribute("kind_structure", node).unwrap(),
+                offset_x: parse_attribute("offset_X", node).unwrap(),
+                offset_y: parse_attribute("offset_Y", node).unwrap(),
+                condition_bottom: parse_enum_attribute("condition_bottom", node).unwrap(),
+                condition_top: parse_enum_attribute("condition_top", node).unwrap(),
+            });
+        }
     }
 
-    StbColumns { stb_column_list }
+    stb_column_list
 }
 
-fn extract_stb_posts(stb_members_node: roxmltree::Node) -> StbPosts {
-    let stb_posts_node = extract_node("StbPosts", stb_members_node).unwrap();
+fn extract_stb_posts(stb_members_node: roxmltree::Node) -> Vec<StbMember> {
+    let stb_posts_node = extract_node("StbPosts", stb_members_node);
 
-    let mut stb_post_list: Vec<StbPost> = Vec::new();
+    let mut stb_post_list: Vec<StbMember> = Vec::new();
 
-    for node in stb_posts_node.children().filter(|n| n.is_element()) {
-        stb_post_list.push(StbPost {
-            id: parse_attribute("id", node).unwrap(),
-            name: node.attribute("name").unwrap().to_string(),
-            id_node_bottom: parse_attribute("idNode_bottom", node).unwrap(),
-            id_node_top: parse_attribute("idNode_top", node).unwrap(),
-            rotate: parse_attribute("rotate", node).unwrap(),
-            id_section: parse_attribute("id_section", node).unwrap(),
-            kind_structure: parse_enum_attribute("kind_structure", node).unwrap(),
-            offset_x: parse_attribute("offset_X", node).unwrap(),
-            offset_y: parse_attribute("offset_Y", node).unwrap(),
-            offset_bottom_x: parse_attribute("offset_bottom_X", node).unwrap(),
-            offset_bottom_y: parse_attribute("offset_bottom_Y", node).unwrap(),
-            offset_bottom_z: parse_attribute("offset_bottom_Z", node).unwrap(),
-            offset_top_x: parse_attribute("offset_top_X", node).unwrap(),
-            offset_top_y: parse_attribute("offset_top_Y", node).unwrap(),
-            offset_top_z: parse_attribute("offset_top_Z", node).unwrap(),
-            condition_bottom: parse_enum_attribute("condition_bottom", node).unwrap(),
-            condition_top: parse_enum_attribute("condition_top", node).unwrap(),
-        });
+    if let Some(stb_posts_node) = stb_posts_node {
+        for node in stb_posts_node.children().filter(|n| n.is_element()) {
+            stb_post_list.push(StbMember::StbPost {
+                id: parse_attribute("id", node).unwrap(),
+                name: node.attribute("name").unwrap().to_string(),
+                id_node_bottom: parse_attribute("idNode_bottom", node).unwrap(),
+                id_node_top: parse_attribute("idNode_top", node).unwrap(),
+                rotate: parse_attribute("rotate", node).unwrap(),
+                id_section: parse_attribute("id_section", node).unwrap(),
+                kind_structure: parse_enum_attribute("kind_structure", node).unwrap(),
+                offset_x: parse_attribute("offset_X", node).unwrap(),
+                offset_y: parse_attribute("offset_Y", node).unwrap(),
+                offset_bottom_x: parse_attribute("offset_bottom_X", node).unwrap(),
+                offset_bottom_y: parse_attribute("offset_bottom_Y", node).unwrap(),
+                offset_bottom_z: parse_attribute("offset_bottom_Z", node).unwrap(),
+                offset_top_x: parse_attribute("offset_top_X", node).unwrap(),
+                offset_top_y: parse_attribute("offset_top_Y", node).unwrap(),
+                offset_top_z: parse_attribute("offset_top_Z", node).unwrap(),
+                condition_bottom: parse_enum_attribute("condition_bottom", node).unwrap(),
+                condition_top: parse_enum_attribute("condition_top", node).unwrap(),
+            });
+        }
     }
 
-    StbPosts { stb_post_list }
+    stb_post_list
 }
 
 fn extract_stb_girders(stb_members_node: roxmltree::Node) -> StbGirders {
@@ -387,64 +391,52 @@ fn extract_stb_sections(stb_model_node: roxmltree::Node) -> StbSections {
     for node in stb_sections_node.children().filter(|n| n.is_element()) {
         let tag_name = node.tag_name().name();
 
-        match tag_name {
-            "StbSecColumn_RC" => unimplemented_panic(tag_name),
-            "StbSecColumn_S" => {
-                let stb_sec_column_s = extract_stb_sec_column_s(node);
-                stb_sections
-                    .column_s_map
-                    .insert(stb_sec_column_s.id, stb_sec_column_s);
-            }
-            "StbSecColumn_SRC" => unimplemented_panic(tag_name),
-            "StbSecColumn_CFT" => unimplemented_panic(tag_name),
-            "StbSecBeam_RC" => {
-                let stb_sec_beam_rc = extract_stb_sec_beam_rc(node);
-                stb_sections
-                    .beam_rc_map
-                    .insert(stb_sec_beam_rc.id, stb_sec_beam_rc);
-            }
-            "StbSecBeam_S" => {
-                let stb_sec_beam_s = extract_stb_sec_beam_s(node);
-                stb_sections
-                    .beam_s_map
-                    .insert(stb_sec_beam_s.id, stb_sec_beam_s);
-            }
-            "StbSecBeam_SRC" => unimplemented_panic(tag_name),
-            "StbSecBrace_S" => {
-                let stb_sec_brace_s = extract_stb_sec_brace_s(node);
-                stb_sections
-                    .brace_s_map
-                    .insert(stb_sec_brace_s.id, stb_sec_brace_s);
-            }
-            "StbSecSlab_RC" => {
-                let stb_sec_slab_rc = extract_stb_sec_slab_rc(node);
-                stb_sections
-                    .slab_rc_map
-                    .insert(stb_sec_slab_rc.id, stb_sec_slab_rc);
-            }
-            "StbSecSlabDeck" => unimplemented_panic(tag_name),
-            "StbSecSlabPrecast" => unimplemented_panic(tag_name),
-            "StbSecWall_RC" => unimplemented_panic(tag_name),
-            "StbSecFoundation_RC" => unimplemented_panic(tag_name),
-            "StbSecPile_RC" => unimplemented_panic(tag_name),
-            "StbSecPile_S" => unimplemented_panic(tag_name),
-            "StbSecPileProduct" => unimplemented_panic(tag_name),
-            "StbSecOpen_RC" => unimplemented_panic(tag_name),
-            "StbSecParapet_RC" => unimplemented_panic(tag_name),
-            "StbSecSteel" => stb_sections.stb_sec_steel = extract_stb_sec_steel(node),
-            "StbSecUndefined" => unimplemented_panic(tag_name),
-            _ => {
-                panic!("Tag name {} is invalid.", tag_name)
-            }
+        if tag_name == "StbSecSteel" {
+            stb_sections.stb_sec_steel = extract_stb_sec_steel(node);
+            continue;
+        }
+
+        assert_ne!(tag_name, "StbSecSteel");
+
+        // returns None if unimplemented.
+        let stb_section = match tag_name {
+            "StbSecColumn_RC" => None,
+            "StbSecColumn_S" => Some(extract_stb_sec_column_s(node)),
+            "StbSecColumn_SRC" => None,
+            "StbSecColumn_CFT" => None,
+            "StbSecBeam_RC" => Some(extract_stb_sec_beam_rc(node)),
+            "StbSecBeam_S" => Some(extract_stb_sec_beam_s(node)),
+            "StbSecBeam_SRC" => None,
+            "StbSecBrace_S" => Some(extract_stb_sec_brace_s(node)),
+            "StbSecSlab_RC" => Some(extract_stb_sec_slab_rc(node)),
+            "StbSecSlabDeck" => None,
+            "StbSecSlabPrecast" => None,
+            "StbSecWall_RC" => None,
+            "StbSecFoundation_RC" => None,
+            "StbSecPile_RC" => None,
+            "StbSecPile_S" => None,
+            "StbSecPileProduct" => None,
+            "StbSecOpen_RC" => None,
+            "StbSecParapet_RC" => None,
+            "StbSecUndefined" => None,
+            _ => None,
         };
+
+        let stb_section =
+            stb_section.unwrap_or_else(|| panic!("Tag name {} is unimplemented!", tag_name));
+
+        stb_sections
+            .stb_section_map
+            .insert(stb_section.id(), stb_section);
     }
 
     stb_sections
 }
 
-fn extract_stb_sec_column_s(node: roxmltree::Node) -> StbSecColumnS {
+fn extract_stb_sec_column_s(node: roxmltree::Node) -> StbSection {
     let stb_sec_steel_column_node = extract_node("StbSecSteelColumn", node).unwrap();
-    StbSecColumnS {
+
+    StbSection::StbSecColumnS {
         id: parse_attribute("id", node).unwrap(),
         name: parse_attribute("name", node).unwrap(),
         floor: parse_attribute("floor", node).unwrap(),
@@ -460,14 +452,16 @@ fn extract_stb_sec_column_s(node: roxmltree::Node) -> StbSecColumnS {
     }
 }
 
-fn extract_stb_sec_beam_rc(node: roxmltree::Node) -> StbSecBeamRC {
+fn extract_stb_sec_beam_rc(node: roxmltree::Node) -> StbSection {
     let stb_sec_figure_node = extract_node("StbSecFigure", node).unwrap();
+
     let stb_sec_figure = extract_stb_sec_figure_beam(stb_sec_figure_node);
 
     let stb_sec_bar_arrangement_node = extract_node("StbSecBar_Arrangement", node).unwrap();
+
     let stb_sec_bar_arrangement = extract_stb_sec_bar_arrangement(stb_sec_bar_arrangement_node);
 
-    StbSecBeamRC {
+    StbSection::StbSecBeamRC {
         id: parse_attribute("id", node).unwrap(),
         name: parse_attribute("name", node).unwrap(),
         floor: parse_attribute("name", node).unwrap(),
@@ -595,11 +589,11 @@ fn extract_stb_sec_straight(node: roxmltree::Node) -> StbSecStraightBeam {
     }
 }
 
-fn extract_stb_sec_beam_s(node: roxmltree::Node) -> StbSecBeamS {
+fn extract_stb_sec_beam_s(node: roxmltree::Node) -> StbSection {
     let stb_sec_steel_beam_node = extract_node("StbSecSteelBeam", node).unwrap();
     let stb_sec_steel_beam = extract_stb_sec_steel_beam(stb_sec_steel_beam_node);
 
-    StbSecBeamS {
+    StbSection::StbSecBeamS {
         id: parse_attribute("id", node).unwrap(),
         name: parse_attribute("name", node).unwrap(),
         floor: parse_attribute("floor", node).unwrap(),
@@ -618,7 +612,7 @@ fn extract_stb_sec_steel_beam(node: roxmltree::Node) -> StbSecSteelBeam {
     }
 }
 
-fn extract_stb_sec_brace_s(node: roxmltree::Node) -> StbSecBraceS {
+fn extract_stb_sec_brace_s(node: roxmltree::Node) -> StbSection {
     let stb_sec_steel_brace_node = extract_node("StbSecSteelBrace", node).unwrap();
     let stb_sec_steel_brace = StbSecSteelBrace {
         pos: parse_enum_attribute("pos", stb_sec_steel_brace_node).unwrap(),
@@ -627,7 +621,7 @@ fn extract_stb_sec_brace_s(node: roxmltree::Node) -> StbSecBraceS {
         strength_web: parse_attribute("strength_web", stb_sec_steel_brace_node).unwrap(),
     };
 
-    StbSecBraceS {
+    StbSection::StbSecBraceS {
         id: parse_attribute("id", node).unwrap(),
         name: parse_attribute("name", node).unwrap(),
         floor: parse_attribute("floor", node).unwrap(),
@@ -636,7 +630,7 @@ fn extract_stb_sec_brace_s(node: roxmltree::Node) -> StbSecBraceS {
     }
 }
 
-fn extract_stb_sec_slab_rc(node: roxmltree::Node) -> StbSecSlabRC {
+fn extract_stb_sec_slab_rc(node: roxmltree::Node) -> StbSection {
     let stb_sec_figure_node = extract_node("StbSecFigure", node).unwrap();
     let stb_sec_straight_node = extract_node("StbSecStraight", stb_sec_figure_node).unwrap();
     let stb_sec_straight = StbSecStraightSlab {
@@ -663,7 +657,7 @@ fn extract_stb_sec_slab_rc(node: roxmltree::Node) -> StbSecSlabRC {
         stb_sec_1way_slab_1_list,
     };
 
-    StbSecSlabRC {
+    StbSection::StbSecSlabRC {
         id: parse_attribute("id", node).unwrap(),
         name: parse_attribute("name", node).unwrap(),
         is_foundation: parse_attribute("isFoundation", node).unwrap(),
@@ -679,59 +673,37 @@ fn extract_stb_sec_steel(stb_sec_steel_node: roxmltree::Node) -> StbSecSteel {
 
     for node in stb_sec_steel_node.children().filter(|n| n.is_element()) {
         let tag_name = node.tag_name().name();
-        match tag_name {
-            "StbSecRoll-H" => {
-                let stb_sec_roll_h = extract_stb_sec_roll_h(node);
-                stb_sec_steel
-                    .roll_h_map
-                    .insert(stb_sec_roll_h.name.clone(), stb_sec_roll_h);
-            }
-            "StbSecBuild-H" => {
-                let stb_sec_build_h = extract_stb_sec_build_h(node);
-                stb_sec_steel
-                    .build_h_map
-                    .insert(stb_sec_build_h.name.clone(), stb_sec_build_h);
-            }
-            "StbSecRoll-BOX" => {
-                let stb_sec_roll_box = extract_stb_sec_roll_box(node);
-                stb_sec_steel
-                    .roll_box_map
-                    .insert(stb_sec_roll_box.name.clone(), stb_sec_roll_box);
-            }
-            "StbSecBuild-BOX" => {
-                let stb_sec_build_box = extract_stb_sec_build_box(node);
-                stb_sec_steel
-                    .build_box_map
-                    .insert(stb_sec_build_box.name.clone(), stb_sec_build_box);
-            }
-            "StbSecPipe" => {
-                let stb_sec_pipe = extract_stb_sec_pipe(node);
-                stb_sec_steel
-                    .pipe_map
-                    .insert(stb_sec_pipe.name.clone(), stb_sec_pipe);
-            }
-            "StbSecRoll-T" => unimplemented_panic(tag_name),
-            "StbSecRoll-C" => unimplemented_panic(tag_name),
-            "StbSecRoll-L" => {
-                let stb_sec_roll_l = extract_stb_sec_roll_l(node);
-                stb_sec_steel
-                    .roll_l_map
-                    .insert(stb_sec_roll_l.name.clone(), stb_sec_roll_l);
-            }
-            "StbSecLipC" => unimplemented_panic(tag_name),
-            "StbSecFlatBar" => unimplemented_panic(tag_name),
-            "StbSecRoundBar" => unimplemented_panic(tag_name),
-            "StbSecSteelProduct" => unimplemented_panic(tag_name),
-            "StbSecSteelUndefined" => unimplemented_panic(tag_name),
-            _ => panic!("Tag name {} is invalid.", tag_name),
-        }
+
+        let stb_sec_steel_children = match tag_name {
+            "StbSecRoll-H" => Some(extract_stb_sec_roll_h(node)),
+            "StbSecBuild-H" => Some(extract_stb_sec_build_h(node)),
+            "StbSecRoll-BOX" => Some(extract_stb_sec_roll_box(node)),
+            "StbSecBuild-BOX" => Some(extract_stb_sec_build_box(node)),
+            "StbSecPipe" => Some(extract_stb_sec_pipe(node)),
+            "StbSecRoll-T" => None,
+            "StbSecRoll-C" => None,
+            "StbSecRoll-L" => Some(extract_stb_sec_roll_l(node)),
+            "StbSecLipC" => None,
+            "StbSecFlatBar" => None,
+            "StbSecRoundBar" => None,
+            "StbSecSteelProduct" => None,
+            "StbSecSteelUndefined" => None,
+            _ => None,
+        };
+
+        let stb_sec_steel_children = stb_sec_steel_children
+            .unwrap_or_else(|| panic!("Tag name {} is unimplemented.", tag_name));
+
+        stb_sec_steel
+            .children_map
+            .insert(stb_sec_steel_children.name(), stb_sec_steel_children);
     }
 
     stb_sec_steel
 }
 
-fn extract_stb_sec_roll_h(node: roxmltree::Node) -> StbSecRollH {
-    StbSecRollH {
+fn extract_stb_sec_roll_h(node: roxmltree::Node) -> StbSecSteelChildren {
+    StbSecSteelChildren::StbSecRollH {
         name: parse_attribute("name", node).unwrap(),
         sec_type: parse_enum_attribute("type", node).unwrap(),
         a: parse_attribute("A", node).unwrap(),
@@ -742,8 +714,8 @@ fn extract_stb_sec_roll_h(node: roxmltree::Node) -> StbSecRollH {
     }
 }
 
-fn extract_stb_sec_build_h(node: roxmltree::Node) -> StbSecBuildH {
-    StbSecBuildH {
+fn extract_stb_sec_build_h(node: roxmltree::Node) -> StbSecSteelChildren {
+    StbSecSteelChildren::StbSecBuildH {
         name: parse_attribute("name", node).unwrap(),
         a: parse_attribute("A", node).unwrap(),
         b: parse_attribute("B", node).unwrap(),
@@ -752,8 +724,8 @@ fn extract_stb_sec_build_h(node: roxmltree::Node) -> StbSecBuildH {
     }
 }
 
-fn extract_stb_sec_roll_box(node: roxmltree::Node) -> StbSecRollBox {
-    StbSecRollBox {
+fn extract_stb_sec_roll_box(node: roxmltree::Node) -> StbSecSteelChildren {
+    StbSecSteelChildren::StbSecRollBox {
         name: parse_attribute("name", node).unwrap(),
         sec_type: parse_enum_attribute("type", node).unwrap(),
         a: parse_attribute("A", node).unwrap(),
@@ -763,8 +735,8 @@ fn extract_stb_sec_roll_box(node: roxmltree::Node) -> StbSecRollBox {
     }
 }
 
-fn extract_stb_sec_build_box(node: roxmltree::Node) -> StbSecBuildBox {
-    StbSecBuildBox {
+fn extract_stb_sec_build_box(node: roxmltree::Node) -> StbSecSteelChildren {
+    StbSecSteelChildren::StbSecBuildBox {
         name: parse_attribute("name", node).unwrap(),
         a: parse_attribute("A", node).unwrap(),
         b: parse_attribute("B", node).unwrap(),
@@ -773,16 +745,16 @@ fn extract_stb_sec_build_box(node: roxmltree::Node) -> StbSecBuildBox {
     }
 }
 
-fn extract_stb_sec_pipe(node: roxmltree::Node) -> StbSecPipe {
-    StbSecPipe {
+fn extract_stb_sec_pipe(node: roxmltree::Node) -> StbSecSteelChildren {
+    StbSecSteelChildren::StbSecPipe {
         name: parse_attribute("name", node).unwrap(),
         d: parse_attribute("D", node).unwrap(),
         t: parse_attribute("t", node).unwrap(),
     }
 }
 
-fn extract_stb_sec_roll_l(node: roxmltree::Node) -> StbSecRollL {
-    StbSecRollL {
+fn extract_stb_sec_roll_l(node: roxmltree::Node) -> StbSecSteelChildren {
+    StbSecSteelChildren::StbSecRollL {
         name: parse_attribute("name", node).unwrap(),
         sec_type: parse_enum_attribute("type", node).unwrap(),
         a: parse_attribute("A", node).unwrap(),
@@ -822,8 +794,4 @@ fn parse_enum_attribute<T: FromStr>(
     node: roxmltree::Node,
 ) -> Result<T, <T as FromStr>::Err> {
     T::from_str(node.attribute(name).unwrap())
-}
-
-fn unimplemented_panic(what: &str) {
-    panic!("{} is unimplemented!", what);
 }

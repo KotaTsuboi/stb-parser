@@ -1,3 +1,5 @@
+use crate::st_bridge::*;
+
 pub struct Node {
     pub x: f64,
     pub y: f64,
@@ -26,6 +28,7 @@ impl Shape {
 }
 
 pub struct ExtrudeGeometry {
+    pub id: u32,
     pub shape: Shape,
     pub length: f64,
     pub theta_x: f64,
@@ -34,12 +37,13 @@ pub struct ExtrudeGeometry {
 }
 
 impl ExtrudeGeometry {
-    pub fn new(shape: Shape, ni: Node, nj: Node, rotate: f64) -> ExtrudeGeometry {
+    pub fn new(id: u32, shape: Shape, ni: Node, nj: Node, rotate: f64) -> ExtrudeGeometry {
         let xr = nj.x - ni.x;
         let yr = nj.y - ni.y;
         let zr = nj.z - ni.z;
 
         ExtrudeGeometry {
+            id,
             shape,
             length: Node::distance(ni, nj),
             theta_x: (yr / zr).atan(),
@@ -47,4 +51,15 @@ impl ExtrudeGeometry {
             theta_z: rotate,
         }
     }
+}
+
+pub fn create_geometry_list(st_bridge: StBridge) -> Vec<ExtrudeGeometry> {
+    let geometry_list = Vec::new();
+
+    let stb_model = st_bridge.stb_model;
+    let stb_members = stb_model.stb_members;
+    let stb_nodes = stb_model.stb_nodes;
+    let stb_sections = stb_model.stb_sections;
+
+    geometry_list
 }

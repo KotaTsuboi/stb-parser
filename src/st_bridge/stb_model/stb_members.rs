@@ -1,29 +1,131 @@
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use strum_macros::EnumString;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StbMembers {
-    pub stb_columns: StbColumns,
-    pub stb_posts: StbPosts,
-    pub stb_girders: StbGirders,
-    pub stb_beams: StbBeams,
-    pub stb_braces: StbBraces,
-    pub stb_slabs: StbSlabs,
-    // TODO: implement StbWalls
-    // TODO: implement StbFootings
-    // TODO: implement StbStripFootings
-    // TODO: implement StbPiles
-    // TODO: implement StbFoundationColumns
-    // TODO: implement StbParapets
-    // TODO: implement StbOpens
+    pub stb_member_map: HashMap<u32, StbMember>,
+    //pub stb_columns: StbColumns,
+    //pub stb_posts: StbPosts,
+    //pub stb_girders: StbGirders,
+    //pub stb_beams: StbBeams,
+    //pub stb_braces: StbBraces,
+    //pub stb_slabs: StbSlabs,
 }
 
+// TODO: implement StbWalls
+// TODO: implement StbFootings
+// TODO: implement StbStripFootings
+// TODO: implement StbPiles
+// TODO: implement StbFoundationColumns
+// TODO: implement StbParapets
+// TODO: implement StbOpens
+#[derive(Debug, Serialize, Deserialize)]
+pub enum StbMember {
+    StbColumn {
+        id: u32,
+        name: String,
+        id_node_bottom: i32,
+        id_node_top: i32,
+        rotate: f64,
+        id_section: u32,
+        kind_structure: ColumnStructureKind,
+        offset_x: f64,
+        offset_y: f64,
+        condition_bottom: JointCondition,
+        condition_top: JointCondition,
+    },
+    StbPost {
+        id: u32,
+        name: String,
+        id_node_bottom: i32,
+        id_node_top: i32,
+        rotate: f64,
+        id_section: u32,
+        kind_structure: ColumnStructureKind,
+        offset_x: f64,
+        offset_y: f64,
+        offset_bottom_x: f64,
+        offset_bottom_y: f64,
+        offset_bottom_z: f64,
+        offset_top_x: f64,
+        offset_top_y: f64,
+        offset_top_z: f64,
+        condition_bottom: JointCondition,
+        condition_top: JointCondition,
+    },
+    StbGirder {
+        id: u32,
+        name: String,
+        id_node_start: i32,
+        id_node_end: i32,
+        rotate: f64,
+        id_section: u32,
+        kind_structure: GirderStructureKind,
+        is_foundation: bool,
+        offset: f64,
+        level: f64,
+        type_haunch_h: Option<HaunchType>,
+    },
+    StbBeam {
+        id: u32,
+        name: String,
+        id_node_start: i32,
+        id_node_end: u32,
+        rotate: f64,
+        id_section: u32,
+        kind_structure: GirderStructureKind,
+        is_foundation: bool,
+        offset: f64,
+        level: f64,
+    },
+    StbBrace {
+        id: u32,
+        name: String,
+        id_node_start: i32,
+        id_node_end: i32,
+        rotate: f64,
+        id_section: u32,
+        kind_structure: BraceStructureKind,
+        offset_start_x: f64,
+        offset_start_y: f64,
+        offset_start_z: f64,
+        offset_end_x: f64,
+        offset_end_y: f64,
+        offset_end_z: f64,
+        condition_start: JointCondition,
+        condition_end: JointCondition,
+    },
+    StbSlab {
+        id: u32,
+        name: String,
+        id_section: u32,
+        kind_structure: SlabStructureKind,
+        kind_slab: SlabKind,
+        level: f64,
+        is_foundation: bool,
+    },
+}
+
+impl StbMember {
+    pub fn id(&self) -> u32 {
+        match *self {
+            StbMember::StbColumn { id, .. } => id,
+            StbMember::StbSlab { id, .. } => id,
+            StbMember::StbBrace { id, .. } => id,
+            StbMember::StbBeam { id, .. } => id,
+            StbMember::StbGirder { id, .. } => id,
+            StbMember::StbPost { id, .. } => id,
+        }
+    }
+}
+
+/*
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StbColumns {
     pub stb_column_list: Vec<StbColumn>,
 }
 
-/*
 impl StbColumns {
     pub fn new() -> StbColumns {
         StbColumns {
@@ -32,21 +134,6 @@ impl StbColumns {
     }
 }
 */
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct StbColumn {
-    pub id: i32,
-    pub name: String,
-    pub id_node_bottom: i32,
-    pub id_node_top: i32,
-    pub rotate: f64,
-    pub id_section: i32,
-    pub kind_structure: ColumnStructureKind,
-    pub offset_x: f64,
-    pub offset_y: f64,
-    pub condition_bottom: JointCondition,
-    pub condition_top: JointCondition,
-}
 
 #[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum ColumnStructureKind {
@@ -70,12 +157,12 @@ pub enum JointCondition {
     Pin,
 }
 
+/*
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StbGirders {
     pub stb_girder_list: Vec<StbGirder>,
 }
 
-/*
 impl StbGirders {
     pub fn new() -> StbGirders {
         StbGirders {
@@ -84,21 +171,6 @@ impl StbGirders {
     }
 }
 */
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct StbGirder {
-    pub id: i32,
-    pub name: String,
-    pub id_node_start: i32,
-    pub id_node_end: i32,
-    pub rotate: f64,
-    pub id_section: i32,
-    pub kind_structure: GirderStructureKind,
-    pub is_foundation: bool,
-    pub offset: f64,
-    pub level: f64,
-    pub type_haunch_h: Option<HaunchType>,
-}
 
 #[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum GirderStructureKind {
@@ -122,12 +194,12 @@ pub enum HaunchType {
     Left,
 }
 
+/*
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StbPosts {
     pub stb_post_list: Vec<StbPost>,
 }
 
-/*
 impl StbPosts {
     pub fn new() -> StbPosts {
         StbPosts {
@@ -137,33 +209,12 @@ impl StbPosts {
 }
 */
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct StbPost {
-    pub id: i32,
-    pub name: String,
-    pub id_node_bottom: i32,
-    pub id_node_top: i32,
-    pub rotate: f64,
-    pub id_section: i32,
-    pub kind_structure: ColumnStructureKind,
-    pub offset_x: f64,
-    pub offset_y: f64,
-    pub offset_bottom_x: f64,
-    pub offset_bottom_y: f64,
-    pub offset_bottom_z: f64,
-    pub offset_top_x: f64,
-    pub offset_top_y: f64,
-    pub offset_top_z: f64,
-    pub condition_bottom: JointCondition,
-    pub condition_top: JointCondition,
-}
-
+/*
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StbBeams {
     pub stb_beam_list: Vec<StbBeam>,
 }
 
-/*
 impl StbBeams {
     pub fn new() -> StbBeams {
         StbBeams {
@@ -173,26 +224,12 @@ impl StbBeams {
 }
 */
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct StbBeam {
-    pub id: i32,
-    pub name: String,
-    pub id_node_start: i32,
-    pub id_node_end: i32,
-    pub rotate: f64,
-    pub id_section: i32,
-    pub kind_structure: GirderStructureKind,
-    pub is_foundation: bool,
-    pub offset: f64,
-    pub level: f64,
-}
-
+/*
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StbSlabs {
     pub stb_slab_list: Vec<StbSlab>,
 }
 
-/*
 impl StbSlabs {
     pub fn new() -> StbSlabs {
         StbSlabs {
@@ -201,17 +238,6 @@ impl StbSlabs {
     }
 }
 */
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct StbSlab {
-    pub id: i32,
-    pub name: String,
-    pub id_section: i32,
-    pub kind_structure: SlabStructureKind,
-    pub kind_slab: SlabKind,
-    pub level: f64,
-    pub is_foundation: bool,
-}
 
 #[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum SlabStructureKind {
@@ -231,12 +257,12 @@ pub enum SlabKind {
     Canti,
 }
 
+/*
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StbBraces {
     pub stb_brace_list: Vec<StbBrace>,
 }
 
-/*
 impl StbBraces {
     pub fn new() -> StbBraces {
         StbBraces {
@@ -245,25 +271,6 @@ impl StbBraces {
     }
 }
 */
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct StbBrace {
-    pub id: i32,
-    pub name: String,
-    pub id_node_start: i32,
-    pub id_node_end: i32,
-    pub rotate: f64,
-    pub id_section: i32,
-    pub kind_structure: BraceStructureKind,
-    pub offset_start_x: f64,
-    pub offset_start_y: f64,
-    pub offset_start_z: f64,
-    pub offset_end_x: f64,
-    pub offset_end_y: f64,
-    pub offset_end_z: f64,
-    pub condition_start: JointCondition,
-    pub condition_end: JointCondition,
-}
 
 #[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum BraceStructureKind {
