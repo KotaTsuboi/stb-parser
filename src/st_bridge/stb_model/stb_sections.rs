@@ -1,21 +1,31 @@
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use strum_macros::EnumString;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StbSections {
-    pub children: Vec<Box<dyn StbSectionsChildren>>,
+    pub column_s_map: HashMap<i32, StbSecColumnS>,
+    pub beam_rc_map: HashMap<i32, StbSecBeamRC>,
+    pub beam_s_map: HashMap<i32, StbSecBeamS>,
+    pub slab_rc_map: HashMap<i32, StbSecSlabRC>,
+    pub brace_s_map: HashMap<i32, StbSecBraceS>,
     pub stb_sec_steel: StbSecSteel,
 }
 
 impl StbSections {
     pub fn new() -> StbSections {
         StbSections {
-            children: Vec::new(),
+            column_s_map: HashMap::new(),
+            beam_rc_map: HashMap::new(),
+            beam_s_map: HashMap::new(),
+            slab_rc_map: HashMap::new(),
+            brace_s_map: HashMap::new(),
             stb_sec_steel: StbSecSteel::new(),
         }
     }
 }
 
+/*
 pub trait StbSectionsChildren {}
 
 impl std::fmt::Debug for dyn StbSectionsChildren {
@@ -23,6 +33,7 @@ impl std::fmt::Debug for dyn StbSectionsChildren {
         write!(f, "{}", "section")
     }
 }
+*/
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecColumnS {
@@ -35,7 +46,7 @@ pub struct StbSecColumnS {
     pub stb_sec_steel_column: StbSecSteelColumn,
 }
 
-impl StbSectionsChildren for StbSecColumnS {}
+//impl StbSectionsChildren for StbSecColumnS {}
 
 #[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum ColumnKind {
@@ -97,7 +108,7 @@ pub struct StbSecBeamRC {
     pub stb_sec_bar_arrangement: StbSecBarArrangementBeam,
 }
 
-impl StbSectionsChildren for StbSecBeamRC {}
+//impl StbSectionsChildren for StbSecBeamRC {}
 
 #[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum BeamKind {
@@ -177,7 +188,7 @@ pub struct StbSecBeamS {
     pub stb_sec_steel_beam: StbSecSteelBeam,
 }
 
-impl StbSectionsChildren for StbSecBeamS {}
+//impl StbSectionsChildren for StbSecBeamS {}
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecSteelBeam {
@@ -204,7 +215,7 @@ pub struct StbSecSlabRC {
     pub stb_sec_bar_arrangement: StbSecBarArrangementSlab,
 }
 
-impl StbSectionsChildren for StbSecSlabRC {}
+//impl StbSectionsChildren for StbSecSlabRC {}
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecFigureSlab {
@@ -250,7 +261,7 @@ pub struct StbSecBraceS {
     pub stb_sec_steel_brace: StbSecSteelBrace,
 }
 
-impl StbSectionsChildren for StbSecBraceS {}
+//impl StbSectionsChildren for StbSecBraceS {}
 
 #[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum BraceKind {
@@ -276,17 +287,28 @@ pub enum StbSecSteelBraceSPosition {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecSteel {
-    pub children: Vec<Box<dyn StbSecSteelChildren>>,
+    pub roll_h_map: HashMap<String, StbSecRollH>,
+    pub build_h_map: HashMap<String, StbSecBuildH>,
+    pub roll_box_map: HashMap<String, StbSecRollBox>,
+    pub build_box_map: HashMap<String, StbSecBuildBox>,
+    pub pipe_map: HashMap<String, StbSecPipe>,
+    pub roll_l_map: HashMap<String, StbSecRollL>,
 }
 
 impl StbSecSteel {
     pub fn new() -> StbSecSteel {
         StbSecSteel {
-            children: Vec::new(),
+            roll_h_map: HashMap::new(),
+            build_h_map: HashMap::new(),
+            roll_box_map: HashMap::new(),
+            build_box_map: HashMap::new(),
+            pipe_map: HashMap::new(),
+            roll_l_map: HashMap::new(),
         }
     }
 }
 
+/*
 pub trait StbSecSteelChildren {}
 
 impl std::fmt::Debug for dyn StbSecSteelChildren {
@@ -294,6 +316,7 @@ impl std::fmt::Debug for dyn StbSecSteelChildren {
         write!(f, "{}", "steel section")
     }
 }
+*/
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecRollH {
@@ -306,7 +329,7 @@ pub struct StbSecRollH {
     pub r: f64,
 }
 
-impl StbSecSteelChildren for StbSecRollH {}
+//impl StbSecSteelChildren for StbSecRollH {}
 
 #[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum StbSecRollHType {
@@ -325,7 +348,7 @@ pub struct StbSecBuildH {
     pub t2: f64,
 }
 
-impl StbSecSteelChildren for StbSecBuildH {}
+//impl StbSecSteelChildren for StbSecBuildH {}
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecRollBox {
@@ -337,7 +360,7 @@ pub struct StbSecRollBox {
     pub r: f64,
 }
 
-impl StbSecSteelChildren for StbSecRollBox {}
+//impl StbSecSteelChildren for StbSecRollBox {}
 
 #[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum StbSecRollBoxType {
@@ -360,7 +383,7 @@ pub struct StbSecBuildBox {
     pub t2: f64,
 }
 
-impl StbSecSteelChildren for StbSecBuildBox {}
+//impl StbSecSteelChildren for StbSecBuildBox {}
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecPipe {
@@ -369,7 +392,7 @@ pub struct StbSecPipe {
     pub t: f64,
 }
 
-impl StbSecSteelChildren for StbSecPipe {}
+//impl StbSecSteelChildren for StbSecPipe {}
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StbSecRollL {
@@ -384,7 +407,7 @@ pub struct StbSecRollL {
     pub side: bool,
 }
 
-impl StbSecSteelChildren for StbSecRollL {}
+//impl StbSecSteelChildren for StbSecRollL {}
 
 #[derive(Debug, EnumString, Serialize, Deserialize)]
 pub enum StbSecRollLType {

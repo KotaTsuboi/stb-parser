@@ -3,61 +3,16 @@ use std::io::prelude::*;
 use std::str::FromStr;
 
 use crate::st_bridge::stb_common::StbCommon;
-use crate::st_bridge::stb_extensions::StbExtension;
-use crate::st_bridge::stb_extensions::StbExtensions;
-use crate::st_bridge::stb_model::stb_axes_and_stories::StbAxes;
-use crate::st_bridge::stb_model::stb_axes_and_stories::StbNodeId;
-use crate::st_bridge::stb_model::stb_axes_and_stories::StbNodeIdList;
-use crate::st_bridge::stb_model::stb_axes_and_stories::StbStories;
-use crate::st_bridge::stb_model::stb_axes_and_stories::StbStory;
-use crate::st_bridge::stb_model::stb_axes_and_stories::StbStoryKind;
-use crate::st_bridge::stb_model::stb_axes_and_stories::StbXAxis;
-use crate::st_bridge::stb_model::stb_axes_and_stories::StbYAxis;
-use crate::st_bridge::stb_model::stb_members::HaunchType;
-use crate::st_bridge::stb_model::stb_members::StbBeam;
-use crate::st_bridge::stb_model::stb_members::StbBeams;
-use crate::st_bridge::stb_model::stb_members::StbBrace;
-use crate::st_bridge::stb_model::stb_members::StbBraces;
-use crate::st_bridge::stb_model::stb_members::StbColumn;
-use crate::st_bridge::stb_model::stb_members::StbColumns;
-use crate::st_bridge::stb_model::stb_members::StbGirder;
-use crate::st_bridge::stb_model::stb_members::StbGirders;
-use crate::st_bridge::stb_model::stb_members::StbMembers;
-use crate::st_bridge::stb_model::stb_members::StbPost;
-use crate::st_bridge::stb_model::stb_members::StbPosts;
-use crate::st_bridge::stb_model::stb_members::StbSlab;
-use crate::st_bridge::stb_model::stb_members::StbSlabs;
-use crate::st_bridge::stb_model::stb_nodes::StbNode;
-use crate::st_bridge::stb_model::stb_nodes::StbNodes;
-use crate::st_bridge::stb_model::stb_sections::StbSec1WaySlab1;
-use crate::st_bridge::stb_model::stb_sections::StbSecBarArrangementBeam;
-use crate::st_bridge::stb_model::stb_sections::StbSecBarArrangementSlab;
-use crate::st_bridge::stb_model::stb_sections::StbSecBeamRC;
-use crate::st_bridge::stb_model::stb_sections::StbSecBeamS;
-use crate::st_bridge::stb_model::stb_sections::StbSecBeamSameSection;
-use crate::st_bridge::stb_model::stb_sections::StbSecBeamStartCenterEndSection;
-use crate::st_bridge::stb_model::stb_sections::StbSecBraceS;
-use crate::st_bridge::stb_model::stb_sections::StbSecBuildBox;
-use crate::st_bridge::stb_model::stb_sections::StbSecBuildH;
-use crate::st_bridge::stb_model::stb_sections::StbSecColumnS;
-use crate::st_bridge::stb_model::stb_sections::StbSecFigureBeam;
-use crate::st_bridge::stb_model::stb_sections::StbSecFigureSlab;
-use crate::st_bridge::stb_model::stb_sections::StbSecHaunch;
-use crate::st_bridge::stb_model::stb_sections::StbSecPipe;
-use crate::st_bridge::stb_model::stb_sections::StbSecRollBox;
-use crate::st_bridge::stb_model::stb_sections::StbSecRollH;
-use crate::st_bridge::stb_model::stb_sections::StbSecRollL;
-use crate::st_bridge::stb_model::stb_sections::StbSecSlabRC;
-use crate::st_bridge::stb_model::stb_sections::StbSecSteel;
-use crate::st_bridge::stb_model::stb_sections::StbSecSteelBeam;
-use crate::st_bridge::stb_model::stb_sections::StbSecSteelBrace;
-use crate::st_bridge::stb_model::stb_sections::StbSecSteelColumn;
-use crate::st_bridge::stb_model::stb_sections::StbSecStraightBeam;
-use crate::st_bridge::stb_model::stb_sections::StbSecStraightSlab;
-use crate::st_bridge::stb_model::stb_sections::StbSections;
+use crate::st_bridge::stb_extensions::*;
+use crate::st_bridge::stb_model::stb_axes_and_stories::*;
+use crate::st_bridge::stb_model::stb_members::*;
+use crate::st_bridge::stb_model::stb_nodes::*;
+use crate::st_bridge::stb_model::stb_sections::*;
 use crate::st_bridge::stb_model::StbModel;
 use crate::st_bridge::StBridge;
 
+pub mod geometry;
+pub mod material;
 pub mod st_bridge;
 
 pub fn read_st_bridge(file_name: &str) -> StBridge {
@@ -434,24 +389,39 @@ fn extract_stb_sections(stb_model_node: roxmltree::Node) -> StbSections {
 
         match tag_name {
             "StbSecColumn_RC" => unimplemented_panic(tag_name),
-            "StbSecColumn_S" => stb_sections
-                .children
-                .push(Box::new(extract_stb_sec_column_s(node))),
+            "StbSecColumn_S" => {
+                let stb_sec_column_s = extract_stb_sec_column_s(node);
+                stb_sections
+                    .column_s_map
+                    .insert(stb_sec_column_s.id, stb_sec_column_s);
+            }
             "StbSecColumn_SRC" => unimplemented_panic(tag_name),
             "StbSecColumn_CFT" => unimplemented_panic(tag_name),
-            "StbSecBeam_RC" => stb_sections
-                .children
-                .push(Box::new(extract_stb_sec_beam_rc(node))),
-            "StbSecBeam_S" => stb_sections
-                .children
-                .push(Box::new(extract_stb_sec_beam_s(node))),
+            "StbSecBeam_RC" => {
+                let stb_sec_beam_rc = extract_stb_sec_beam_rc(node);
+                stb_sections
+                    .beam_rc_map
+                    .insert(stb_sec_beam_rc.id, stb_sec_beam_rc);
+            }
+            "StbSecBeam_S" => {
+                let stb_sec_beam_s = extract_stb_sec_beam_s(node);
+                stb_sections
+                    .beam_s_map
+                    .insert(stb_sec_beam_s.id, stb_sec_beam_s);
+            }
             "StbSecBeam_SRC" => unimplemented_panic(tag_name),
-            "StbSecBrace_S" => stb_sections
-                .children
-                .push(Box::new(extract_stb_sec_brace_s(node))),
-            "StbSecSlab_RC" => stb_sections
-                .children
-                .push(Box::new(extract_stb_sec_slab_rc(node))),
+            "StbSecBrace_S" => {
+                let stb_sec_brace_s = extract_stb_sec_brace_s(node);
+                stb_sections
+                    .brace_s_map
+                    .insert(stb_sec_brace_s.id, stb_sec_brace_s);
+            }
+            "StbSecSlab_RC" => {
+                let stb_sec_slab_rc = extract_stb_sec_slab_rc(node);
+                stb_sections
+                    .slab_rc_map
+                    .insert(stb_sec_slab_rc.id, stb_sec_slab_rc);
+            }
             "StbSecSlabDeck" => unimplemented_panic(tag_name),
             "StbSecSlabPrecast" => unimplemented_panic(tag_name),
             "StbSecWall_RC" => unimplemented_panic(tag_name),
@@ -710,26 +680,44 @@ fn extract_stb_sec_steel(stb_sec_steel_node: roxmltree::Node) -> StbSecSteel {
     for node in stb_sec_steel_node.children().filter(|n| n.is_element()) {
         let tag_name = node.tag_name().name();
         match tag_name {
-            "StbSecRoll-H" => stb_sec_steel
-                .children
-                .push(Box::new(extract_stb_sec_roll_h(node))),
-            "StbSecBuild-H" => stb_sec_steel
-                .children
-                .push(Box::new(extract_stb_sec_build_h(node))),
-            "StbSecRoll-BOX" => stb_sec_steel
-                .children
-                .push(Box::new(extract_stb_sec_roll_box(node))),
-            "StbSecBuild-BOX" => stb_sec_steel
-                .children
-                .push(Box::new(extract_stb_sec_build_box(node))),
-            "StbSecPipe" => stb_sec_steel
-                .children
-                .push(Box::new(extract_stb_sec_pipe(node))),
+            "StbSecRoll-H" => {
+                let stb_sec_roll_h = extract_stb_sec_roll_h(node);
+                stb_sec_steel
+                    .roll_h_map
+                    .insert(stb_sec_roll_h.name.clone(), stb_sec_roll_h);
+            }
+            "StbSecBuild-H" => {
+                let stb_sec_build_h = extract_stb_sec_build_h(node);
+                stb_sec_steel
+                    .build_h_map
+                    .insert(stb_sec_build_h.name.clone(), stb_sec_build_h);
+            }
+            "StbSecRoll-BOX" => {
+                let stb_sec_roll_box = extract_stb_sec_roll_box(node);
+                stb_sec_steel
+                    .roll_box_map
+                    .insert(stb_sec_roll_box.name.clone(), stb_sec_roll_box);
+            }
+            "StbSecBuild-BOX" => {
+                let stb_sec_build_box = extract_stb_sec_build_box(node);
+                stb_sec_steel
+                    .build_box_map
+                    .insert(stb_sec_build_box.name.clone(), stb_sec_build_box);
+            }
+            "StbSecPipe" => {
+                let stb_sec_pipe = extract_stb_sec_pipe(node);
+                stb_sec_steel
+                    .pipe_map
+                    .insert(stb_sec_pipe.name.clone(), stb_sec_pipe);
+            }
             "StbSecRoll-T" => unimplemented_panic(tag_name),
             "StbSecRoll-C" => unimplemented_panic(tag_name),
-            "StbSecRoll-L" => stb_sec_steel
-                .children
-                .push(Box::new(extract_stb_sec_roll_l(node))),
+            "StbSecRoll-L" => {
+                let stb_sec_roll_l = extract_stb_sec_roll_l(node);
+                stb_sec_steel
+                    .roll_l_map
+                    .insert(stb_sec_roll_l.name.clone(), stb_sec_roll_l);
+            }
             "StbSecLipC" => unimplemented_panic(tag_name),
             "StbSecFlatBar" => unimplemented_panic(tag_name),
             "StbSecRoundBar" => unimplemented_panic(tag_name),
