@@ -5,24 +5,22 @@ use strum_macros::EnumString;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StbSections {
-    pub stb_section_map: HashMap<u32, StbSection>,
-    //pub column_s_map: HashMap<i32, StbSecColumnS>,
-    //pub beam_rc_map: HashMap<i32, StbSecBeamRC>,
-    //pub beam_s_map: HashMap<i32, StbSecBeamS>,
-    //pub slab_rc_map: HashMap<i32, StbSecSlabRC>,
-    //pub brace_s_map: HashMap<i32, StbSecBraceS>,
+    pub column_s_map: HashMap<u32, StbSection>,
+    pub beam_rc_map: HashMap<u32, StbSection>,
+    pub beam_s_map: HashMap<u32, StbSection>,
+    pub slab_rc_map: HashMap<u32, StbSection>,
+    pub brace_s_map: HashMap<u32, StbSection>,
     pub stb_sec_steel: StbSecSteel,
 }
 
 impl StbSections {
     pub fn new() -> StbSections {
         StbSections {
-            stb_section_map: HashMap::new(),
-            //column_s_map: HashMap::new(),
-            //beam_rc_map: HashMap::new(),
-            //beam_s_map: HashMap::new(),
-            //slab_rc_map: HashMap::new(),
-            //brace_s_map: HashMap::new(),
+            column_s_map: HashMap::new(),
+            beam_rc_map: HashMap::new(),
+            beam_s_map: HashMap::new(),
+            slab_rc_map: HashMap::new(),
+            brace_s_map: HashMap::new(),
             stb_sec_steel: StbSecSteel::new(),
         }
     }

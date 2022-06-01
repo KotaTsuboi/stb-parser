@@ -416,36 +416,53 @@ fn extract_stb_sections(stb_model_node: roxmltree::Node) -> StbSections {
 
         assert_ne!(tag_name, "StbSecSteel");
 
-        // returns None if unimplemented.
-        let stb_section = match tag_name {
-            "StbSecColumn_RC" => None,
-            "StbSecColumn_S" => Some(extract_stb_sec_column_s(node)),
-            "StbSecColumn_SRC" => None,
-            "StbSecColumn_CFT" => None,
-            "StbSecBeam_RC" => Some(extract_stb_sec_beam_rc(node)),
-            "StbSecBeam_S" => Some(extract_stb_sec_beam_s(node)),
-            "StbSecBeam_SRC" => None,
-            "StbSecBrace_S" => Some(extract_stb_sec_brace_s(node)),
-            "StbSecSlab_RC" => Some(extract_stb_sec_slab_rc(node)),
-            "StbSecSlabDeck" => None,
-            "StbSecSlabPrecast" => None,
-            "StbSecWall_RC" => None,
-            "StbSecFoundation_RC" => None,
-            "StbSecPile_RC" => None,
-            "StbSecPile_S" => None,
-            "StbSecPileProduct" => None,
-            "StbSecOpen_RC" => None,
-            "StbSecParapet_RC" => None,
-            "StbSecUndefined" => None,
-            _ => None,
+        match tag_name {
+            "StbSecColumn_RC" => {}
+            "StbSecColumn_S" => {
+                let stb_section = extract_stb_sec_column_s(node);
+                stb_sections
+                    .column_s_map
+                    .insert(stb_section.id(), stb_section);
+            }
+            "StbSecColumn_SRC" => {}
+            "StbSecColumn_CFT" => {}
+            "StbSecBeam_RC" => {
+                let stb_section = extract_stb_sec_beam_rc(node);
+                stb_sections
+                    .beam_rc_map
+                    .insert(stb_section.id(), stb_section);
+            }
+            "StbSecBeam_S" => {
+                let stb_section = extract_stb_sec_beam_s(node);
+                stb_sections
+                    .beam_s_map
+                    .insert(stb_section.id(), stb_section);
+            }
+            "StbSecBeam_SRC" => {}
+            "StbSecBrace_S" => {
+                let stb_section = extract_stb_sec_brace_s(node);
+                stb_sections
+                    .brace_s_map
+                    .insert(stb_section.id(), stb_section);
+            }
+            "StbSecSlab_RC" => {
+                let stb_section = extract_stb_sec_slab_rc(node);
+                stb_sections
+                    .slab_rc_map
+                    .insert(stb_section.id(), stb_section);
+            }
+            "StbSecSlabDeck" => {}
+            "StbSecSlabPrecast" => {}
+            "StbSecWall_RC" => {}
+            "StbSecFoundation_RC" => {}
+            "StbSecPile_RC" => {}
+            "StbSecPile_S" => {}
+            "StbSecPileProduct" => {}
+            "StbSecOpen_RC" => {}
+            "StbSecParapet_RC" => {}
+            "StbSecUndefined" => {}
+            _ => {}
         };
-
-        let stb_section =
-            stb_section.unwrap_or_else(|| panic!("Tag name {} is unimplemented!", tag_name));
-
-        stb_sections
-            .stb_section_map
-            .insert(stb_section.id(), stb_section);
     }
 
     stb_sections
