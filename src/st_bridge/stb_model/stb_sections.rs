@@ -381,6 +381,42 @@ impl StbSecSteelChildren {
             StbSecSteelChildren::StbSecRollL { name, .. } => name.clone(),
         }
     }
+
+    pub fn shape(&self) -> Vec<(f64, f64)> {
+        match self {
+            StbSecSteelChildren::StbSecRollH { a, b, t1, t2, .. } => {
+                vec![
+                    (-b / 2.0, -a / 2.0),
+                    (b / 2.0, -a / 2.0),
+                    (b / 2.0, -a / 2.0 + t1),
+                    (t2 / 2.0, -a / 2.0 + t1),
+                    (t2 / 2.0, a / 2.0 - t1),
+                    (b / 2.0, a / 2.0 - t1),
+                    (b / 2.0, a / 2.0),
+                    (-b / 2.0, a / 2.0),
+                    (-b / 2.0, a / 2.0 - t1),
+                    (-t2 / 2.0, a / 2.0 - t1),
+                    (-t2 / 2.0, -a / 2.0 + t1),
+                    (-b / 2.0, -a / 2.0 + t1),
+                ]
+            }
+            StbSecSteelChildren::StbSecBuildH { a, b, t1, t2, .. } => {
+                vec![(0.0, 0.0)]
+            }
+            StbSecSteelChildren::StbSecRollBox { a, b, t, .. } => {
+                vec![(0.0, 0.0)]
+            }
+            StbSecSteelChildren::StbSecBuildBox { a, b, t1, t2, .. } => {
+                vec![(0.0, 0.0)]
+            }
+            StbSecSteelChildren::StbSecPipe { d, t, .. } => {
+                vec![(0.0, 0.0)]
+            }
+            StbSecSteelChildren::StbSecRollL { a, b, t1, t2, .. } => {
+                vec![(0.0, 0.0)]
+            }
+        }
+    }
 }
 
 /*

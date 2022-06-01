@@ -4,22 +4,34 @@ use strum_macros::EnumString;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StbMembers {
-    pub stb_member_map: HashMap<u32, StbMember>,
-    //pub stb_columns: StbColumns,
-    //pub stb_posts: StbPosts,
-    //pub stb_girders: StbGirders,
-    //pub stb_beams: StbBeams,
-    //pub stb_braces: StbBraces,
-    //pub stb_slabs: StbSlabs,
+    pub stb_columns: HashMap<u32, StbMember>,
+    pub stb_posts: HashMap<u32, StbMember>,
+    pub stb_girders: HashMap<u32, StbMember>,
+    pub stb_beams: HashMap<u32, StbMember>,
+    pub stb_braces: HashMap<u32, StbMember>,
+    pub stb_slabs: HashMap<u32, StbMember>,
+    // TODO: implement StbWalls
+    // TODO: implement StbFootings
+    // TODO: implement StbStripFootings
+    // TODO: implement StbPiles
+    // TODO: implement StbFoundationColumns
+    // TODO: implement StbParapets
+    // TODO: implement StbOpens
 }
 
-// TODO: implement StbWalls
-// TODO: implement StbFootings
-// TODO: implement StbStripFootings
-// TODO: implement StbPiles
-// TODO: implement StbFoundationColumns
-// TODO: implement StbParapets
-// TODO: implement StbOpens
+impl StbMembers {
+    pub fn new() -> StbMembers {
+        StbMembers {
+            stb_columns: HashMap::new(),
+            stb_posts: HashMap::new(),
+            stb_girders: HashMap::new(),
+            stb_beams: HashMap::new(),
+            stb_braces: HashMap::new(),
+            stb_slabs: HashMap::new(),
+        }
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub enum StbMember {
     StbColumn {

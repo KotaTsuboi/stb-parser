@@ -211,35 +211,30 @@ fn extract_stb_stories(stb_model_node: roxmltree::Node) -> StbStories {
 fn extract_stb_members(stb_model_node: roxmltree::Node) -> StbMembers {
     let stb_members_node = extract_node("StbMembers", stb_model_node).unwrap();
 
-    let mut stb_member_map: HashMap<u32, StbMember> = HashMap::new();
+    let mut stb_members = StbMembers::new();
 
     for node in stb_members_node.children().filter(|n| n.is_element()) {
         let tag_name = node.tag_name().name();
 
-        let member_map = match tag_name {
-            "StbColumns" => Some(extract_stb_columns(node)),
-            "StbPosts" => Some(extract_stb_posts(stb_members_node)),
-            "StbGirders" => Some(extract_stb_girders(stb_members_node)),
-            "StbBeams" => Some(extract_stb_beams(stb_members_node)),
-            "StbBraces" => Some(extract_stb_braces(stb_members_node)),
-            "StbSlabs" => Some(extract_stb_slabs(stb_members_node)),
-            "StbWalls" => None,
-            "StbFootings" => None,
-            "StbStripFootings" => None,
-            "StbPiles" => None,
-            "StbFoundationColumns" => None,
-            "StbParapets" => None,
-            "StbOpens" => None,
-            _ => None,
+        match tag_name {
+            "StbColumns" => stb_members.stb_columns = extract_stb_columns(node),
+            "StbPosts" => stb_members.stb_posts = extract_stb_posts(stb_members_node),
+            "StbGirders" => stb_members.stb_girders = extract_stb_girders(stb_members_node),
+            "StbBeams" => stb_members.stb_beams = extract_stb_beams(stb_members_node),
+            "StbBraces" => stb_members.stb_braces = extract_stb_braces(stb_members_node),
+            "StbSlabs" => stb_members.stb_slabs = extract_stb_slabs(stb_members_node),
+            "StbWalls" => {}
+            "StbFootings" => {}
+            "StbStripFootings" => {}
+            "StbPiles" => {}
+            "StbFoundationColumns" => {}
+            "StbParapets" => {}
+            "StbOpens" => {}
+            _ => {}
         };
-
-        let member_map =
-            member_map.unwrap_or_else(|| panic!("Tag name {} is unimplemented.", tag_name));
-
-        stb_member_map.extend(member_map.into_iter());
     }
 
-    StbMembers { stb_member_map }
+    stb_members
 }
 
 fn extract_stb_columns(stb_columns_node: roxmltree::Node) -> HashMap<u32, StbMember> {
