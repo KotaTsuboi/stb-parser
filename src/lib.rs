@@ -114,7 +114,7 @@ fn extract_stb_nodes(stb_model_node: roxmltree::Node) -> StbNodes {
 
     for node in stb_nodes_node.children().filter(|n| n.is_element()) {
         let id_member = match node.attribute("id_member") {
-            Some(s) => Some(s.parse::<i32>().unwrap()),
+            Some(s) => Some(s.parse::<u32>().unwrap()),
             None => None,
         };
 

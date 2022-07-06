@@ -4,7 +4,7 @@ use strum_macros::EnumString;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StbNodes {
-    pub map: HashMap<i32, StbNode>,
+    pub map: HashMap<u32, StbNode>,
 }
 
 impl StbNodes {
@@ -14,11 +14,11 @@ impl StbNodes {
         }
     }
 
-    pub fn insert(&mut self, key: i32, value: StbNode) {
+    pub fn insert(&mut self, key: u32, value: StbNode) {
         self.map.insert(key, value);
     }
 
-    pub fn get(&self, key: i32) -> Option<&StbNode> {
+    pub fn get(&self, key: u32) -> Option<&StbNode> {
         self.map.get(&key)
     }
 }
@@ -29,7 +29,7 @@ pub struct StbNode {
     pub y: f64,
     pub z: f64,
     pub kind: StbNodeKind,
-    pub id_member: Option<i32>,
+    pub id_member: Option<u32>,
 }
 
 #[derive(Debug, EnumString, Serialize, Deserialize)]

@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use std::collections::hash_map::Iter;
 use std::collections::HashMap;
 use strum_macros::EnumString;
 
@@ -30,6 +31,53 @@ impl StbMembers {
             stb_slabs: HashMap::new(),
         }
     }
+
+    pub fn iter<'a>(&'a self) -> StbMembersIter<'a> {
+        StbMembersIter::new(self)
+    }
+}
+
+pub struct StbMembersIter<'a> {
+    columns_iter: Iter<'a, u32, StbMember>,
+    posts_iter: Iter<'a, u32, StbMember>,
+    girders_iter: Iter<'a, u32, StbMember>,
+    beams_iter: Iter<'a, u32, StbMember>,
+    braces_iter: Iter<'a, u32, StbMember>,
+    slabs_iter: Iter<'a, u32, StbMember>,
+}
+
+impl StbMembersIter<'_> {
+    pub fn new(stb_members: &StbMembers) -> StbMembersIter {
+        StbMembersIter {
+            columns_iter: stb_members.stb_columns.iter(),
+            posts_iter: stb_members.stb_posts.iter(),
+            girders_iter: stb_members.stb_girders.iter(),
+            beams_iter: stb_members.stb_beams.iter(),
+            braces_iter: stb_members.stb_braces.iter(),
+            slabs_iter: stb_members.stb_slabs.iter(),
+        }
+    }
+}
+
+impl<'a> Iterator for StbMembersIter<'a> {
+    type Item = &'a StbMember;
+    fn next(&mut self) -> Option<Self::Item> {
+        if let Some(t) = self.columns_iter.next() {
+            return Some(t.1);
+        } else if let Some(t) = self.posts_iter.next() {
+            return Some(t.1);
+        } else if let Some(t) = self.girders_iter.next() {
+            return Some(t.1);
+        } else if let Some(t) = self.beams_iter.next() {
+            return Some(t.1);
+        } else if let Some(t) = self.braces_iter.next() {
+            return Some(t.1);
+        } else if let Some(t) = self.slabs_iter.next() {
+            return Some(t.1);
+        } else {
+            return None;
+        }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -37,8 +85,8 @@ pub enum StbMember {
     StbColumn {
         id: u32,
         name: String,
-        id_node_bottom: i32,
-        id_node_top: i32,
+        id_node_bottom: u32,
+        id_node_top: u32,
         rotate: f64,
         id_section: u32,
         kind_structure: ColumnStructureKind,
@@ -50,8 +98,8 @@ pub enum StbMember {
     StbPost {
         id: u32,
         name: String,
-        id_node_bottom: i32,
-        id_node_top: i32,
+        id_node_bottom: u32,
+        id_node_top: u32,
         rotate: f64,
         id_section: u32,
         kind_structure: ColumnStructureKind,
@@ -69,8 +117,8 @@ pub enum StbMember {
     StbGirder {
         id: u32,
         name: String,
-        id_node_start: i32,
-        id_node_end: i32,
+        id_node_start: u32,
+        id_node_end: u32,
         rotate: f64,
         id_section: u32,
         kind_structure: GirderStructureKind,
@@ -82,7 +130,7 @@ pub enum StbMember {
     StbBeam {
         id: u32,
         name: String,
-        id_node_start: i32,
+        id_node_start: u32,
         id_node_end: u32,
         rotate: f64,
         id_section: u32,
@@ -94,8 +142,8 @@ pub enum StbMember {
     StbBrace {
         id: u32,
         name: String,
-        id_node_start: i32,
-        id_node_end: i32,
+        id_node_start: u32,
+        id_node_end: u32,
         rotate: f64,
         id_section: u32,
         kind_structure: BraceStructureKind,
@@ -128,6 +176,28 @@ impl StbMember {
             StbMember::StbBeam { id, .. } => id,
             StbMember::StbGirder { id, .. } => id,
             StbMember::StbPost { id, .. } => id,
+        }
+    }
+
+    pub fn node_i(&self) -> u32 {
+        match *self {
+            StbMember::StbColumn { id_node_bottom, .. } => id_node_bottom,
+            StbMember::StbSlab { .. } => panic!(""),
+            StbMember::StbBrace { id_node_start, .. } => id_node_start,
+            StbMember::StbBeam { id_node_start, .. } => id_node_start,
+            StbMember::StbGirder { id_node_start, .. } => id_node_start,
+            StbMember::StbPost { id_node_bottom, .. } => id_node_bottom,
+        }
+    }
+
+    pub fn node_j(&self) -> u32 {
+        match *self {
+            StbMember::StbColumn { id_node_top, .. } => id_node_top,
+            StbMember::StbSlab { .. } => panic!(""),
+            StbMember::StbBrace { id_node_end, .. } => id_node_end,
+            StbMember::StbBeam { id_node_end, .. } => id_node_end,
+            StbMember::StbGirder { id_node_end, .. } => id_node_end,
+            StbMember::StbPost { id_node_top, .. } => id_node_top,
         }
     }
 }
