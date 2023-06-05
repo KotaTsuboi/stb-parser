@@ -16,6 +16,12 @@ impl StbAxes {
     }
 }
 
+impl Default for StbAxes {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StbXAxis {
     pub id: i32,
@@ -52,6 +58,12 @@ impl StbStories {
         StbStories {
             stb_story_list: Vec::new(),
         }
+    }
+}
+
+impl Default for StbStories {
+    fn default() -> Self {
+        Self::new()
     }
 }
 

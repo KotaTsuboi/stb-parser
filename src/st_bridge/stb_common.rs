@@ -16,6 +16,12 @@ impl StbCommon {
     }
 }
 
+impl Default for StbCommon {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StbReinforcementStrengthList {
     map: HashMap<String, String>,

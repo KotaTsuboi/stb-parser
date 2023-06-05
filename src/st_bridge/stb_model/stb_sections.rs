@@ -26,7 +26,14 @@ impl StbSections {
     }
 }
 
+impl Default for StbSections {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
+#[allow(clippy::large_enum_variant)]
 pub enum StbSection {
     StbSecColumnS {
         id: u32,
@@ -317,6 +324,12 @@ impl StbSecSteel {
     }
 }
 
+impl Default for StbSecSteel {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub enum StbSecSteelChildren {
     StbSecRollH {
@@ -398,18 +411,28 @@ impl StbSecSteelChildren {
                     (-b / 2.0, -a / 2.0 + t1),
                 ]
             }
+            // TODO: implement shape
+            #[allow(unused_variables)]
             StbSecSteelChildren::StbSecBuildH { a, b, t1, t2, .. } => {
                 vec![(0.0, 0.0)]
             }
+            // TODO: implement shape
+            #[allow(unused_variables)]
             StbSecSteelChildren::StbSecRollBox { a, b, t, .. } => {
                 vec![(0.0, 0.0)]
             }
+            // TODO: implement shape
+            #[allow(unused_variables)]
             StbSecSteelChildren::StbSecBuildBox { a, b, t1, t2, .. } => {
                 vec![(0.0, 0.0)]
             }
+            // TODO: implement shape
+            #[allow(unused_variables)]
             StbSecSteelChildren::StbSecPipe { d, t, .. } => {
                 vec![(0.0, 0.0)]
             }
+            // TODO: implement shape
+            #[allow(unused_variables)]
             StbSecSteelChildren::StbSecRollL { a, b, t1, t2, .. } => {
                 vec![(0.0, 0.0)]
             }

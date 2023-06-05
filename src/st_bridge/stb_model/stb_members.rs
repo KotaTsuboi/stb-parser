@@ -32,8 +32,14 @@ impl StbMembers {
         }
     }
 
-    pub fn iter<'a>(&'a self) -> StbMembersIter<'a> {
+    pub fn iter(&self) -> StbMembersIter {
         StbMembersIter::new(self)
+    }
+}
+
+impl Default for StbMembers {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -63,19 +69,19 @@ impl<'a> Iterator for StbMembersIter<'a> {
     type Item = &'a StbMember;
     fn next(&mut self) -> Option<Self::Item> {
         if let Some(t) = self.columns_iter.next() {
-            return Some(t.1);
+            Some(t.1)
         } else if let Some(t) = self.posts_iter.next() {
-            return Some(t.1);
+            Some(t.1)
         } else if let Some(t) = self.girders_iter.next() {
-            return Some(t.1);
+            Some(t.1)
         } else if let Some(t) = self.beams_iter.next() {
-            return Some(t.1);
+            Some(t.1)
         } else if let Some(t) = self.braces_iter.next() {
-            return Some(t.1);
+            Some(t.1)
         } else if let Some(t) = self.slabs_iter.next() {
-            return Some(t.1);
+            Some(t.1)
         } else {
-            return None;
+            None
         }
     }
 }

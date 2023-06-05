@@ -47,7 +47,7 @@ pub fn get_contents(filename: &str) -> String {
     f.read_to_string(&mut contents)
         .expect("something went wrong reading the file");
 
-    return contents;
+    contents
 }
 
 pub fn extract_node<'a>(
@@ -82,7 +82,7 @@ pub fn extract_stb_common<'a>(root_node: roxmltree::Node<'a, 'a>) -> StbCommon {
         stb_common.stb_reinforcement_strength_list.insert(d, sd);
     }
 
-    return stb_common;
+    stb_common
 }
 
 pub fn extract_stb_model(root_node: roxmltree::Node) -> StbModel {
@@ -113,11 +113,9 @@ fn extract_stb_nodes(stb_model_node: roxmltree::Node) -> StbNodes {
     let mut stb_nodes = StbNodes::new();
 
     for node in stb_nodes_node.children().filter(|n| n.is_element()) {
-        let id_member = match node.attribute("id_member") {
-            Some(s) => Some(s.parse::<u32>().unwrap()),
-            None => None,
-        };
-
+        let id_member = node
+            .attribute("id_member")
+            .map(|s| s.parse::<u32>().unwrap());
         stb_nodes.insert(
             parse_attribute("id", node).unwrap(),
             StbNode {
@@ -313,10 +311,9 @@ fn extract_stb_girders(stb_girders_node: roxmltree::Node) -> HashMap<u32, StbMem
                 is_foundation: parse_attribute("isFoundation", node).unwrap(),
                 offset: parse_attribute("offset", node).unwrap(),
                 level: parse_attribute("level", node).unwrap(),
-                type_haunch_h: match node.attribute("type_haunch_H") {
-                    Some(s) => Some(HaunchType::from_str(s).unwrap()),
-                    None => None,
-                },
+                type_haunch_h: node
+                    .attribute("type_haunch_H")
+                    .map(|s| HaunchType::from_str(s).unwrap()),
             },
         );
     }
@@ -507,34 +504,26 @@ fn extract_stb_sec_beam_rc(node: roxmltree::Node) -> StbSection {
         d_stirrup: parse_attribute("D_stirrup", node).unwrap(),
         d_reinforcement_web: parse_attribute("D_reinforcement_web", node).unwrap(),
         d_bar_spacing: parse_attribute("D_bar_spacing", node).unwrap(),
-        strength_concrete: match node.attribute("strength_concrete") {
-            Some(s) => Some(s.to_string()),
-            None => None,
-        },
+        strength_concrete: node.attribute("strength_concrete").map(|s| s.to_string()),
         strength_reinforcement_main: parse_attribute("strength_reinforcement_main", node).unwrap(),
-        strength_reinforcement_2nd_main: match node.attribute("strength_reinforcement_2nd_main") {
-            Some(s) => Some(s.to_string()),
-            None => None,
-        },
+        strength_reinforcement_2nd_main: node
+            .attribute("strength_reinforcement_2nd_main")
+            .map(|s| s.to_string()),
         strength_stirrup: parse_attribute("strength_stirrup", node).unwrap(),
         strength_reinforcement_web: parse_attribute("strength_reinforcement_web", node).unwrap(),
         strength_bar_spacing: parse_attribute("strength_bar_spacing", node).unwrap(),
-        depth_cover_left: match node.attribute("depth_cover_left") {
-            Some(s) => Some(s.parse().unwrap()),
-            None => None,
-        },
-        depth_cover_right: match node.attribute("depth_cover_right") {
-            Some(s) => Some(s.parse().unwrap()),
-            None => None,
-        },
-        depth_cover_top: match node.attribute("depth_cover_top") {
-            Some(s) => Some(s.parse().unwrap()),
-            None => None,
-        },
-        depth_cover_bottom: match node.attribute("depth_cover_bottom") {
-            Some(s) => Some(s.parse().unwrap()),
-            None => None,
-        },
+        depth_cover_left: node
+            .attribute("depth_cover_left")
+            .map(|s| s.parse().unwrap()),
+        depth_cover_right: node
+            .attribute("depth_cover_right")
+            .map(|s| s.parse().unwrap()),
+        depth_cover_top: node
+            .attribute("depth_cover_top")
+            .map(|s| s.parse().unwrap()),
+        depth_cover_bottom: node
+            .attribute("depth_cover_bottom")
+            .map(|s| s.parse().unwrap()),
         stb_sec_figure,
         stb_sec_bar_arrangement,
     }
@@ -552,10 +541,7 @@ fn extract_stb_sec_bar_arrangement(node: roxmltree::Node) -> StbSecBarArrangemen
         None => None,
     };
 
-    let stb_sec_beam_same_section = match extract_node("", node) {
-        Some(n) => Some(extract_stb_sec_beam_same_section(n)),
-        None => None,
-    };
+    let stb_sec_beam_same_section = extract_node("", node).map(extract_stb_sec_beam_same_section);
 
     StbSecBarArrangementBeam {
         stb_sec_beam_start_center_end_section_list,
@@ -591,15 +577,9 @@ fn extract_stb_sec_beam_same_section(node: roxmltree::Node) -> StbSecBeamSameSec
 }
 
 fn extract_stb_sec_figure_beam(node: roxmltree::Node) -> StbSecFigureBeam {
-    let stb_sec_haunch = match extract_node("StbSecHaunch", node) {
-        Some(n) => Some(extract_stb_sec_haunch(n)),
-        None => None,
-    };
+    let stb_sec_haunch = extract_node("StbSecHaunch", node).map(extract_stb_sec_haunch);
 
-    let stb_sec_straight = match extract_node("StbSecStraight", node) {
-        Some(n) => Some(extract_stb_sec_straight(n)),
-        None => None,
-    };
+    let stb_sec_straight = extract_node("StbSecStraight", node).map(extract_stb_sec_straight);
 
     StbSecFigureBeam {
         stb_sec_haunch,

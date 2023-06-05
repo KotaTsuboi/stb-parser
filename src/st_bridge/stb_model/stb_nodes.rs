@@ -23,6 +23,12 @@ impl StbNodes {
     }
 }
 
+impl Default for StbNodes {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StbNode {
     pub x: f64,

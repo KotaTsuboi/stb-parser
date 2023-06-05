@@ -53,6 +53,8 @@ impl ExtrudeGeometry {
     }
 }
 
+// TODO: implement create_geometry_list
+#[allow(unused_variables)]
 pub fn create_geometry_list(st_bridge: StBridge) -> Vec<ExtrudeGeometry> {
     let geometry_list = Vec::new();
 
